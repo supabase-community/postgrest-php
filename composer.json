@@ -1,0 +1,26 @@
+{
+    "name": "jordan/postgrest-php",
+    "autoload": {
+        "psr-0": { "": "src/" },
+        "psr-4": {
+            "Jordan\\PostgrestPhp\\": "src/"
+        },
+        "classmap": [
+            "src/"
+        ]
+    },
+    "authors": [
+        {
+            "name": "jordan",
+            "email": "jordan@ascensionengineer.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    },
+    "require": {
+        "allure-framework/allure-phpunit": "^2",
+        "spatie/url": "^2.1",
+        "guzzlehttp/guzzle": "^7.5"
+    }
+}
