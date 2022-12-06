@@ -1,12 +1,12 @@
-# postgres-php
+# postgrest-php
 ## Usage
 Install the library
 
-`composer require supabase/postgres-php`
+`composer require supabase/postgrest-php`
 
 Import the library
 
-`use Supabase\Postgres;`
+`use Supabase\Postgrest;`
 
 
 ## Test
