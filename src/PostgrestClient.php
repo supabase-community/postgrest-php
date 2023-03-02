@@ -1,36 +1,38 @@
 <?php
 
 $version = '0.0.0-automated';
-$DEFAULT_HEADERS = array('X-Client-Info' => 'postgrest-js/' . $version);
+$DEFAULT_HEADERS = ['X-Client-Info' => 'postgrest-js/'.$version];
 
 use Spatie\Url\Url;
 
-class PostgrestClient {
-    public function __construct($url, $opts = []) {
+class PostgrestClient
+{
+    public function __construct($url, $opts = [])
+    {
         $this->url = Url::fromString($url);
         $this->headers = isset($opts) && isset($opts->headers) && array_merge($opts->headers, $DEFAULT_HEADERS);
-        $this->schema =  isset($opts) && isset($opts->schema) && $opts->schema;
-        $this->fetch =  isset($opts) && isset($opts->fetch) && $opts->fetch;
+        $this->schema = isset($opts) && isset($opts->schema) && $opts->schema;
+        $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
     }
 
-    public function from($relation) {
+    public function from($relation)
+    {
         $url = $this->url->withPath($relation);
 
-        return new PostgrestQuery($url, array(
+        return new PostgrestQuery($url, [
             'headers' => $this->headers,
-            'schema' => $this->schema,
-            'fetch' => $this->fetch
-        ));
+            'schema'  => $this->schema,
+            'fetch'   => $this->fetch,
+        ]);
     }
 
-    public function rpc($fn, $args = [], $opts = []) {
-        $method;
-        $url = $this->url->withPath('/rpc/' . $fn);
-        $body;
+    public function rpc($fn, $args = [], $opts = [])
+    {
+        $url = $this->url->withPath('/rpc/'.$fn);
 
-        if(isset($opts->head) && $opts->head) {
+        if (isset($opts->head) && $opts->head) {
             $method = 'HEAD';
-            foreach($args as $name => $value){
+            foreach ($args as $name => $value) {
                 $url->withQueryParameters([$name => strvar($value)]);
             }
         } else {
@@ -38,18 +40,18 @@ class PostgrestClient {
             $body = $args;
         }
 
-        if(isset($opts->count) && $opts->count) {
-            $this->headers['Prefer'] = 'count=' . $opts->count;
+        if (isset($opts->count) && $opts->count) {
+            $this->headers['Prefer'] = 'count='.$opts->count;
         }
 
-        return new PostgrestFilter(array(
-            'url' => $url,
-            'headers' => $this->headers,
-            'schema' => $this->schema,
-            'fetch' => $this->fetch,
-            'method' => $method,
-            'body' => $body,
-            'allowEmpty' => false
-        ));
+        return new PostgrestFilter([
+            'url'        => $url,
+            'headers'    => $this->headers,
+            'schema'     => $this->schema,
+            'fetch'      => $this->fetch,
+            'method'     => $method,
+            'body'       => $body,
+            'allowEmpty' => false,
+        ]);
     }
 }
