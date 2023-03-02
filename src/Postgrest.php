@@ -13,7 +13,7 @@ class Postgrest {
     public function __construct($opts) {
         $this->method = isset($opts['method']) && in_array($opts['method'], array('GET', 'POST', 'PATCH', 'PUT', 'DELETE')) && $opts['method'];
         $this->url = $opts['url'];
-        $this->headers = isset($opts['headers']) && $opts['headers'];
+        $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) && $opts['schema'];
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
         $this->signal = isset($opts['signal']) && $opts['signal'];
@@ -22,9 +22,10 @@ class Postgrest {
     }
 
     public function execute() {
+
         if($this->schema) {
             if ($this->method == 'GET' || $this->method == 'HEAD') {
-                $this->headers['Accept-Profile'] = $this->schema;
+                $this->headers[] = 'Accept-Profile: '.$this->schema;
             } else {
                 $this->headers['Content-Profile'] = $this->schema;
             }
@@ -37,7 +38,8 @@ class Postgrest {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
 
-        echo $this->headers;
+        //echo $this->headers;
+        
 
         if(isset($this->headers) && is_array($this->headers)) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
@@ -69,6 +71,7 @@ class Postgrest {
         $statusText;
 
         $body = $response->text;
+        
 
         if($response->ok) {
             if($this->method == 'HEAD') {
