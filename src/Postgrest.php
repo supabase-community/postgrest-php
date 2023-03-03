@@ -67,9 +67,9 @@ class Postgrest
         }
         curl_close($ch);
 
-        $body = $response->text;
+        $body = $response;
 
-        if ($response->ok) {
+        if ($response) {
             if ($this->method == 'HEAD') {
                 if ($body != '') {
                     if ($this->headers['Accept'] == 'text/csv') {

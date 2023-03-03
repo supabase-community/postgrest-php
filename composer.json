@@ -1,18 +1,35 @@
 {
-    "name": "jordan/postgrest-php",
+    "name": "supabase/postgrest-php",
+    "type": "library",
+    "description": "Supabase postgrest for PHP",
+    "keywords": ["supabase","postgrest", "postgrest-php"],
+    "homepage": "https://github.com/supabase-community/postgrest-php",
     "autoload": {
         "psr-0": { "": "src/" },
         "psr-4": {
-            "Jordan\\PostgrestPhp\\": "src/"
+            "Supabase\\PostgrestPhp\\": "src/"
         },
         "classmap": [
             "src/"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Supabase\\Test\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "jordan",
             "email": "jordan@ascensionengineer.com"
+        },
+        {
+            "name": "norm",
+            "email": "norm@zerocopylabs.com"
+        },
+        {
+            "name": "Adolfo",
+            "email": "adolfo@zerocopylabs.com"
         }
     ],
     "require-dev": {
@@ -21,6 +38,7 @@
     "require": {
         "allure-framework/allure-phpunit": "^2",
         "spatie/url": "^2.1",
-        "guzzlehttp/guzzle": "^7.5"
+        "guzzlehttp/guzzle": "^7.5",
+        "vlucas/phpdotenv": "^5.5"
     }
 }

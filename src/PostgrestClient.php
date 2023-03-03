@@ -7,9 +7,9 @@ use Spatie\Url\Url;
 
 class PostgrestClient
 {
-    public function __construct($url, $opts = [])
+    public function __construct($reference_id, $opts = [])
     {
-        $this->url = Url::fromString($url);
+        $this->url = Url::fromString("https://{$reference_id}.supabase.co/rest/v1");
         $this->headers = isset($opts) && isset($opts->headers) && array_merge($opts->headers, $DEFAULT_HEADERS);
         $this->schema = isset($opts) && isset($opts->schema) && $opts->schema;
         $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;

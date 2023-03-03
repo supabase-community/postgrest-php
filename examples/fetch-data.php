@@ -1,24 +1,22 @@
 <?php
+require 'header.php';
 
-include __DIR__.'/../vendor/autoload.php';
+$supabaseUrl = "https://{$reference_id}.supabase.co/rest/v1/users?select=first_name";
+$service_role = $api_key;
 
-$supabaseUrl = 'https://<reference_id>.supabase.co/rest/v1/users?select=first_name';
-$service_role = '<service_role>';
-$apiKey = '<anon_key>';
-
-$authHeader = ['Authorization: Bearer '.$service_role, 'apikey: '.$apiKey,
-    'url: <reference_id>.supabase.co', ];
+$authHeader = ['Authorization: Bearer '.$service_role, 'apikey: '.$api_key,
+    "url: {$reference_id}.supabase.co", ];
 $supabaseKey = '';
 $request_headers = [];
 $request_headers[] = 'Authorization: Bearer '.$service_role;
-$request_headers[] = 'apikey: '.$apiKey;
+$request_headers[] = 'apikey: '.$api_key;
 
-$client = new PostgrestClient($supabaseUrl, []);
+$client = new PostgrestClient($reference_id, []);
 $result = $client->from('users')->select('first_name');
 print_r($result->url->getPath());
 print_r($result->url->getQuery());
 
-$queryURL = 'https://<reference_id>.supabase.co/rest/v1/'.$result->url->getPath().
+$queryURL = $result->url->getScheme()."://{$reference_id}.supabase.co/rest/v1/".$result->url->getPath().
 '?'.$result->url->getQuery();
 
 $post = new Postgrest(['url' => $queryURL, 'headers' => $request_headers,
