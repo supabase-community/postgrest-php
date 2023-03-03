@@ -1,4 +1,5 @@
 <?php
+
 require 'header.php';
 
 $supabaseUrl = "https://{$reference_id}.supabase.co/rest/v1/users?select=first_name";
