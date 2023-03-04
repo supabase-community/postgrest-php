@@ -1,6 +1,7 @@
 <?php
-
-declare(strict_types=1);
+use Psr\Http\Message\ResponseInterface;
+use Supabase\Util\Constants;
+use Supabase\Util\Request;
 
 class Postgrest
 {
@@ -15,7 +16,8 @@ class Postgrest
 
     public function __construct($opts)
     {
-        $this->method = isset($opts['method']) && in_array($opts['method'], ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']) && $opts['method'];
+        //$this->method = isset($opts['method']) && in_array($opts['method'], ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']) && $opts['method'];
+        $this->method = isset($opts['method']) ? $opts['method'] : [];
         $this->url = $opts['url'];
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) && $opts['schema'];
@@ -31,16 +33,22 @@ class Postgrest
             if ($this->method == 'GET' || $this->method == 'HEAD') {
                 $this->headers[] = 'Accept-Profile: '.$this->schema;
             } else {
-                $this->headers['Content-Profile'] = $this->schema;
+                $this->headers[] = 'Content-Profile: '.$this->schema;
             }
         }
 
         if ($this->method != 'GET' || $this->method != 'HEAD') {
-            $this->headers['Content-Type'] = 'application/json';
+            $this->headers[] = 'Content-Type: application/json';
         }
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt( $ch , CURLOPT_HEADER , true );
+        
+        $data = Request::request($this->method, $this->url, $this->headers);
+
+        return $data;
 
         //echo $this->headers;
 
@@ -51,7 +59,11 @@ class Postgrest
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->body);
         }
 
-        if (!$response = curl_exec($ch)) {
+        $response = curl_exec($ch);
+
+        //return $response;
+
+        if (!$response) {
             if ($this->shouldThrowOnError) {
                 throw new Exception('Curl error: '.curl_error($ch));
             } else {
@@ -65,25 +77,43 @@ class Postgrest
                 ], null, curl_getinfo($ch, CURLINFO_HTTP_CODE));
             }
         }
+        //$result = curl_exec( $ch );
         curl_close($ch);
 
-        $body = $response;
+        $headerSize = curl_getinfo( $ch , CURLINFO_HEADER_SIZE );
+        $headerStr = substr( $response , 0 , $headerSize );
+        $body = substr( $response , $headerSize );
 
-        if ($response) {
+        $error = null;
+        $data = null;
+        $count = 0;
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $statusText = $body;
+        
+
+        if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
+            
             if ($this->method == 'HEAD') {
                 if ($body != '') {
-                    if ($this->headers['Accept'] == 'text/csv') {
-                        $data = $body;
-                    } elseif ($this->headers['Accept'] && strpost($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false) {
-                        $data = $body;
+                    if(isset($this->headers['Accept'])){
+                        if ($this->headers['Accept'] == 'text/csv') {
+                            $data = $body;
+                        } elseif ($this->headers['Accept'] && strpost($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false) {
+                            $data = $body;
+                        }
                     } else {
+                        
                         $data = json_decode($body);
                     }
                 }
             }
 
-            $countHeader = $this->headers['Prefer'] && preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], 'count=exact');
-            $contentRange = $response->headers->get('Content-Range');
+            $headers = $this->headersToArray( $headerStr );
+
+            //return $headers;
+
+            $countHeader = isset($this->headers['Prefer']) && preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], 'count=exact');
+            $contentRange = $headers['content-range'];
             if ($countHeader && $contentRange) {
                 $ranges = explode('/', $contentRange);
                 if (count($ranges) > 1) {
@@ -112,6 +142,27 @@ class Postgrest
 
         return $postgrestResponse;
     }
+
+    function headersToArray( $str )
+{
+    $headers = array();
+    $headersTmpArray = explode( "\r\n" , $str );
+    for ( $i = 0 ; $i < count( $headersTmpArray ) ; ++$i )
+    {
+        // we dont care about the two \r\n lines at the end of the headers
+        if ( strlen( $headersTmpArray[$i] ) > 0 )
+        {
+            // the headers start with HTTP status codes, which do not contain a colon so we can filter them out too
+            if ( strpos( $headersTmpArray[$i] , ":" ) )
+            {
+                $headerName = substr( $headersTmpArray[$i] , 0 , strpos( $headersTmpArray[$i] , ":" ) );
+                $headerValue = substr( $headersTmpArray[$i] , strpos( $headersTmpArray[$i] , ":" )+1 );
+                $headers[$headerName] = $headerValue;
+            }
+        }
+    }
+    return $headers;
+}
 }
 
 class PostgrestResponse
