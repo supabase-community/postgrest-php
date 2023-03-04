@@ -4,12 +4,12 @@ namespace Supabase\Util;
 
 class Constants
 {
-	public static $VERSION = '0.0.1';
+    public static $VERSION = '0.0.1';
 
-	public static function getDefaultHeaders()
-	{
-		return [
-			'X-Client-Info' => 'postgrest-php/'.self::$VERSION,
-		];
-	}
+    public static function getDefaultHeaders()
+    {
+        return [
+            'X-Client-Info' => 'postgrest-php/'.self::$VERSION,
+        ];
+    }
 }
