@@ -4,7 +4,7 @@ namespace Supabase\Util;
 
 class Constants
 {
-    public static $VERSION = '0.0.1';
+    public static $VERSION = '0.0.0-automated';
 
     public static function getDefaultHeaders()
     {

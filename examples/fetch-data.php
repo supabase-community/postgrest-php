@@ -16,16 +16,18 @@ $result = $client->from('users')->select('first_name');
 //print_r($result->url->getPath());
 //print_r($result->url->getQuery());
 
-$result = $client->from('users')->insert(['first_name'=> 'New', 'last_name' => 'Test'], []);
+$result = $client->from('users')->insert(['first_name'=> 'New', 'last_name' => 'Test'], [])->url->__toString();
 
-$queryURL = $result->url->getScheme()."://{$reference_id}.supabase.co/rest/v1".$result->url->getPath().
-'?'.$result->url->getQuery();
+//$queryURL = $result->url->getScheme()."://{$reference_id}.supabase.co/rest/v1".$result->url->getPath().
+//'?'.$result->url->getQuery();
 
-print_r($queryURL);
+//$method = $result->getMethod();
+print_r($result);
 
-$post = new Postgrest(['url' => $queryURL, 'headers' => $request_headers,
+
+$post = new Postgrest(['url' => $result, 'headers' => $request_headers,
     'method'                 => 'POST', 'body'=>  ['first_name'=> 'Denmark tested', 'last_name' => 'Test'], ]);
 
 $result = $post->execute();
 $output = json_decode($result->getBody(), true);
-print_r($output);
+//print_r($output);

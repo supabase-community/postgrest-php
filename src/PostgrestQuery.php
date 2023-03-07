@@ -2,12 +2,14 @@
 
 class PostgrestQuery
 {
-    public function __construct($url, $opts = [])
+    public function __construct($url, $reference_id, $api_key, $opts = [])
     {
         $this->url = $url;
-        $this->headers = isset($opts) && isset($opts->headers) && $opts->headers;
+        $this->headers = (isset($opts) && isset($opts['headers'])) ? $opts['headers'] : [];
         $this->schema = isset($opts) && isset($opts->schema) && $opts->schema;
         $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
+        $this->refrence_id = $reference_id;
+        $this->api_key = $api_key;
     }
 
     public function select($columns = '*', $opts = [])
@@ -32,7 +34,7 @@ class PostgrestQuery
             $this->headers['Prefer'] = 'count='.$opts->count;
         }
 
-        return new PostgrestFilter([
+        return new PostgrestFilter($this->reference_id, $this->api_key,[
             'url'        => $this->url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,
@@ -65,16 +67,16 @@ class PostgrestQuery
                 return array_merge($acc, array_keys($x));
             }, []);*/
             $columns = array_keys($values);
-            print_r($columns);
+            //print_r($columns);
 
             if (count($columns) > 0) {
+                print_r($this->url->__toString());
                 $uniqueColumns = array_map(fn ($v) => strval($v), array_unique($columns));
-                $this->url = $this->url->withQueryParameters(['columns'=> join(',', $uniqueColumns)]);
-                print_r($this->url);
+                $this->url = $this->url->withQueryParameters(['columns'=> join(',', $uniqueColumns)]);                
             }
         }
 
-        return new PostgrestFilter([
+        return new PostgrestFilter($this->reference_id, $this->api_key, [
             'url'        => $this->url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,
@@ -104,7 +106,7 @@ class PostgrestQuery
         }
         $this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        return new PostgrestFilter([
+        return new PostgrestFilter($this->reference_id, $this->api_key,[
             'url'        => $this->url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,
@@ -131,7 +133,7 @@ class PostgrestQuery
 
         $this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        return new PostgrestFilter([
+        return new PostgrestFilter($this->reference_id, $this->api_key,[
             'url'        => $this->url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,
@@ -157,7 +159,7 @@ class PostgrestQuery
 
         $this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        return new PostgrestFilter([
+        return new PostgrestFilter($this->reference_id, $this->api_key,[
             'url'        => $this->url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,

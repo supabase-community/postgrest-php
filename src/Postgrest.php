@@ -12,12 +12,13 @@ class Postgrest
     private $shouldThrowOnError;
     private $signal;
     private $allowEmpty;
+    private $reference_id;
+    private $api_key;
 
-    public function __construct($opts)
+    public function __construct($reference_id, $api_key, $opts)
     {
-        //$this->method = isset($opts['method']) && in_array($opts['method'], ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']) && $opts['method'];
-        $this->method = isset($opts['method']) ? $opts['method'] : [];
-        $this->url = $opts['url'];
+        $this->method = (isset($opts['method']) && in_array($opts['method'], array('GET', 'POST', 'PATCH', 'PUT', 'DELETE'))) ? $opts['method'] : NULL;
+        $this->url = isset($opts['url']) ?  $opts['url'] : "https://{$reference_id}.supabase.co/rest/v1";
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) && $opts['schema'];
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
@@ -28,6 +29,7 @@ class Postgrest
 
     public function execute()
     {
+        
         if ($this->schema) {
             if ($this->method == 'GET' || $this->method == 'HEAD') {
                 $this->headers = array_merge($this->headers, ['Accept-Profile' => $this->schema]);
@@ -46,7 +48,9 @@ class Postgrest
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        $data = Request::request($this->method, $this->url, $this->headers, json_encode($this->body));
+        print_r($this->url->__toString());
+
+        $data = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
 
         return $data;
 
