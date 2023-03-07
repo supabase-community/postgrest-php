@@ -24,7 +24,7 @@ $queryURL = $result->url->getScheme()."://{$reference_id}.supabase.co/rest/v1".$
 print_r($queryURL);
 
 $post = new Postgrest(['url' => $queryURL, 'headers' => $request_headers,
-    'method'                 => 'POST', 'body'=>  ['first_name'=> 'Denmark tested', 'last_name' => 'Test']]);
+    'method'                 => 'POST', 'body'=>  ['first_name'=> 'Denmark tested', 'last_name' => 'Test'], ]);
 
 $result = $post->execute();
 $output = json_decode($result->getBody(), true);
