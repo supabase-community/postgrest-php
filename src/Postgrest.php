@@ -17,8 +17,8 @@ class Postgrest
 
     public function __construct($reference_id, $api_key, $opts)
     {
-        $this->method = (isset($opts['method']) && in_array($opts['method'], array('GET', 'POST', 'PATCH', 'PUT', 'DELETE'))) ? $opts['method'] : NULL;
-        $this->url = isset($opts['url']) ?  $opts['url'] : "https://{$reference_id}.supabase.co/rest/v1";
+        $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
+        $this->url = isset($opts['url']) ? $opts['url'] : "https://{$reference_id}.supabase.co/rest/v1";
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) && $opts['schema'];
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
@@ -29,7 +29,6 @@ class Postgrest
 
     public function execute()
     {
-        
         if ($this->schema) {
             if ($this->method == 'GET' || $this->method == 'HEAD') {
                 $this->headers = array_merge($this->headers, ['Accept-Profile' => $this->schema]);

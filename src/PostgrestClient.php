@@ -1,6 +1,8 @@
 <?php
+
 use Spatie\Url\Url;
 use Supabase\Util\Constants;
+
 class PostgrestClient
 {
     public function __construct($reference_id, $api_key, $opts = [])
@@ -18,7 +20,7 @@ class PostgrestClient
     {
         $url = $this->url->withPath('rest/v1/'.$relation);
 
-        return new PostgrestQuery($url,  $this->refrence_id,  $this->api_key, [
+        return new PostgrestQuery($url, $this->refrence_id, $this->api_key, [
             'headers' => $this->headers,
             'schema'  => $this->schema,
             'fetch'   => $this->fetch,
@@ -43,7 +45,7 @@ class PostgrestClient
             $this->headers['Prefer'] = 'count='.$opts->count;
         }
 
-        return new PostgrestFilter($url,  $this->refrence_id,[
+        return new PostgrestFilter($url, $this->refrence_id, [
             'url'        => $url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,

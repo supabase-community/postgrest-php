@@ -24,7 +24,6 @@ $result = $client->from('users')->insert(['first_name'=> 'New', 'last_name' => '
 //$method = $result->getMethod();
 print_r($result);
 
-
 $post = new Postgrest(['url' => $result, 'headers' => $request_headers,
     'method'                 => 'POST', 'body'=>  ['first_name'=> 'Denmark tested', 'last_name' => 'Test'], ]);
 
