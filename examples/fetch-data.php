@@ -16,11 +16,15 @@ $result = $client->from('users')->select('first_name');
 //print_r($result->url->getPath());
 //print_r($result->url->getQuery());
 
-$queryURL = $result->url->getScheme()."://{$reference_id}.supabase.co/rest/v1/".$result->url->getPath().
+$result = $client->from('users')->insert(['first_name'=> 'New', 'last_name' => 'Test'], []);
+
+$queryURL = $result->url->getScheme()."://{$reference_id}.supabase.co/rest/v1".$result->url->getPath().
 '?'.$result->url->getQuery();
 
+print_r($queryURL);
+
 $post = new Postgrest(['url' => $queryURL, 'headers' => $request_headers,
-    'method'                 => 'GET', ]);
+    'method'                 => 'POST', 'body'=>  ['first_name'=> 'Denmark tested', 'last_name' => 'Test']]);
 
 $result = $post->execute();
 $output = json_decode($result->getBody(), true);

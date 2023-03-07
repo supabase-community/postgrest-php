@@ -19,6 +19,7 @@ class Request
 
             return $response;
         } catch (\Exception $e) {
+            print_r($e->getMessage());
             throw self::handleError($e);
         }
     }

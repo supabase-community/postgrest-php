@@ -23,21 +23,22 @@ class Postgrest
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
         $this->signal = isset($opts['signal']) && $opts['signal'];
         $this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
-        $this->body = isset($opts['body']) && $opts['body'];
+        $this->body = isset($opts['body']) ? $opts['body'] : [];
     }
 
     public function execute()
     {
         if ($this->schema) {
             if ($this->method == 'GET' || $this->method == 'HEAD') {
-                $this->headers[] = 'Accept-Profile: '.$this->schema;
+                $this->headers = array_merge($this->headers, ['Accept-Profile' => $this->schema]);
             } else {
-                $this->headers[] = 'Content-Profile: '.$this->schema;
+                $this->headers = array_merge($this->headers, ['Content-Profile' => $this->schema]);
+                //$this->headers[] = 'Content-Profile: '.$this->schema;
             }
         }
 
         if ($this->method != 'GET' || $this->method != 'HEAD') {
-            $this->headers[] = 'Content-Type: application/json';
+            $this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
         }
 
         $ch = curl_init();
@@ -45,7 +46,7 @@ class Postgrest
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        $data = Request::request($this->method, $this->url, $this->headers);
+        $data = Request::request($this->method, $this->url, $this->headers, json_encode($this->body));
 
         return $data;
 

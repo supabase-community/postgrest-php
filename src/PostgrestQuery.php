@@ -48,7 +48,7 @@ class PostgrestQuery
         $body = $values;
         $prefersHeaders = [];
 
-        if ($opts->count) {
+        if (isset($opts->count)) {
             array_push($prefersHeaders, 'count='.$opts->count);
         }
 
@@ -59,9 +59,18 @@ class PostgrestQuery
         $this->headers['Prefer'] = join(',', $prefersHeaders);
 
         if (is_array($values)) {
+
+            /*$columns = array_reduce($values, function($acc, $x) {
+                print_r($acc, $x);
+                return array_merge($acc, array_keys($x));
+            }, []);*/
+            $columns = array_keys($values);
+            print_r($columns);
+
             if (count($columns) > 0) {
                 $uniqueColumns = array_map(fn ($v) => strval($v), array_unique($columns));
-                $this->url = $this->url->withQueryParameters('columns', join(',', $uniqueColumns));
+                $this->url = $this->url->withQueryParameters(['columns'=> join(',', $uniqueColumns)]);
+                print_r($this->url);
             }
         }
 
