@@ -5,22 +5,40 @@ use Supabase\Util\Constants;
 
 class PostgrestClient
 {
-    public function __construct($reference_id, $api_key, $opts = [])
+    private $method;
+    public $url;
+    private $headers;
+    private $body;
+    private $schema;
+    private $shouldThrowOnError;
+    private $signal;
+    private $allowEmpty;
+    private $reference_id;
+    private $scheme;
+    private $domain;
+    private $api_key;
+    private $path;
+    private $fetch;
+
+    public function __construct($reference_id, $api_key, $opts = [], $domain = '', $schema = '', $path = '')
     {
-        $this->url = Url::fromString("https://{$reference_id}.supabase.co/rest/v1");
+
+        $this->url = $reference_id ?  Url::fromString($schema.$reference_id.$domain) : Url::fromString($schema.$reference_id.$domain);
         $headers = ['Authorization' => "Bearer {$api_key}", 'apikey'=>$api_key];
         $this->headers = array_merge(Constants::getDefaultHeaders(), $headers);
-        $this->schema = isset($opts) && isset($opts->schema) && $opts->schema;
+        $this->schema = $schema;
         $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
-        $this->refrence_id = $reference_id;
+        $this->reference_id = $reference_id;
         $this->api_key = $api_key;
+        $this->domain = $domain;
+        $this->path = $path;
     }
 
     public function from($relation)
     {
-        $url = $this->url->withPath('rest/v1/'.$relation);
+        $url = $this->url->withPath($this->path.$relation);
 
-        return new PostgrestQuery($url, $this->refrence_id, $this->api_key, [
+        return new PostgrestQuery($url, $this->reference_id, $this->api_key, [
             'headers' => $this->headers,
             'schema'  => $this->schema,
             'fetch'   => $this->fetch,
@@ -45,7 +63,7 @@ class PostgrestClient
             $this->headers['Prefer'] = 'count='.$opts->count;
         }
 
-        return new PostgrestFilter($url, $this->refrence_id, [
+        return new PostgrestFilter($url, $this->reference_id, [
             'url'        => $url,
             'headers'    => $this->headers,
             'schema'     => $this->schema,

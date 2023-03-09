@@ -30,7 +30,8 @@ class Request
         if (method_exists($error, 'getResponse')) {
             $response = $error->getResponse();
             $data = json_decode($response->getBody(), true);
-            $error = new PostgrestApiError($data['message'], intval($data['statusCode']) || 500);
+            print_r($data);
+            $error = new PostgrestApiError($data['code'], $data['details'], $data['hint'], $data['message'], $response );
         } else {
             $error = new PostgrestUnknownError($error->getMessage(), $error->getCode());
         }

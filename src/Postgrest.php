@@ -1,5 +1,6 @@
 <?php
 
+use Supabase\Util\PostgrestError;
 use Supabase\Util\Request;
 
 class Postgrest
@@ -42,56 +43,35 @@ class Postgrest
             $this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
         }
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, true);
+        try {
+            $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
+            $error = null;
+            $data = json_decode($response->getBody(), true);
+            $count = 0;
+            $status = $response->getStatusCode();
+            $statusText = $response->getReasonPhrase();
 
-        print_r($this->url->__toString());
+            $postgrestResponse = new PostgrestResponse( $data, $error, $count, $status, $statusText);
 
-        $data = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
+            return $postgrestResponse;
+            return $response;
+        } catch (\Exception $e) {
+            if (PostgrestError::isPostgrestError($e)) {
+				return new PostgrestResponse(null, [
+                    'message' => $e->getMessage(),
+                    'details' => isset($e->details) ? $e->details: '',
+                    'hint'    => isset($e->hint) ? $e->hint: '',
+                    'code'    => is_null($e) ? $e->getCode() : null,
+                ], null, is_null($e) ? $e->response->getStatusCode() : null);
+			}
 
-        return $data;
-
-        //echo $this->headers;
-
-        if (isset($this->headers) && is_array($this->headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+			throw $e;
+        
         }
-        if ($this->body) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->body);
-        }
+        
 
-        $response = curl_exec($ch);
-
-        //return $response;
-
-        if (!$response) {
-            if ($this->shouldThrowOnError) {
-                throw new Exception('Curl error: '.curl_error($ch));
-            } else {
-                $err = curl_error($ch);
-
-                return new PostgrestResponse(null, [
-                    'message' => $err,
-                    'details' => '',
-                    'hint'    => '',
-                    'code'    => curl_getinfo($ch, CURLINFO_HTTP_CODE) || '',
-                ], null, curl_getinfo($ch, CURLINFO_HTTP_CODE));
-            }
-        }
-        //$result = curl_exec( $ch );
-        curl_close($ch);
-
-        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headerStr = substr($response, 0, $headerSize);
-        $body = substr($response, $headerSize);
-
-        $error = null;
-        $data = null;
-        $count = 0;
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $statusText = $body;
+        
+       
 
         if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
             if ($this->method == 'HEAD') {
@@ -141,25 +121,6 @@ class Postgrest
         $postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
 
         return $postgrestResponse;
-    }
-
-    public function headersToArray($str)
-    {
-        $headers = [];
-        $headersTmpArray = explode("\r\n", $str);
-        for ($i = 0; $i < count($headersTmpArray); $i++) {
-            // we dont care about the two \r\n lines at the end of the headers
-            if (strlen($headersTmpArray[$i]) > 0) {
-                // the headers start with HTTP status codes, which do not contain a colon so we can filter them out too
-                if (strpos($headersTmpArray[$i], ':')) {
-                    $headerName = substr($headersTmpArray[$i], 0, strpos($headersTmpArray[$i], ':'));
-                    $headerValue = substr($headersTmpArray[$i], strpos($headersTmpArray[$i], ':') + 1);
-                    $headers[$headerName] = $headerValue;
-                }
-            }
-        }
-
-        return $headers;
     }
 }
 

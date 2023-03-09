@@ -2,6 +2,9 @@
 
 class PostgrestQuery
 {
+    private $reference_id;
+    private $api_key;
+
     public function __construct($url, $reference_id, $api_key, $opts = [])
     {
         $this->url = $url;
@@ -50,11 +53,11 @@ class PostgrestQuery
         $body = $values;
         $prefersHeaders = [];
 
-        if (isset($opts->count)) {
+        if (isset($opts['count'])) {
             array_push($prefersHeaders, 'count='.$opts->count);
         }
 
-        if ($this->headers['Prefer']) {
+        if (isset($this->headers['Prefer'])) {
             array_unshift($prefersHeaders, $this->headers['Prefer']);
         }
 
@@ -70,7 +73,7 @@ class PostgrestQuery
             //print_r($columns);
 
             if (count($columns) > 0) {
-                print_r($this->url->__toString());
+                //print_r($this->url->__toString());
                 $uniqueColumns = array_map(fn ($v) => strval($v), array_unique($columns));
                 $this->url = $this->url->withQueryParameters(['columns'=> join(',', $uniqueColumns)]);
             }
