@@ -51,27 +51,23 @@ class Postgrest
             $status = $response->getStatusCode();
             $statusText = $response->getReasonPhrase();
 
-            $postgrestResponse = new PostgrestResponse( $data, $error, $count, $status, $statusText);
+            $postgrestResponse = new PostgrestResponse($data, $error, $count, $status, $statusText);
 
             return $postgrestResponse;
+
             return $response;
         } catch (\Exception $e) {
             if (PostgrestError::isPostgrestError($e)) {
-				return new PostgrestResponse(null, [
+                return new PostgrestResponse(null, [
                     'message' => $e->getMessage(),
-                    'details' => isset($e->details) ? $e->details: '',
-                    'hint'    => isset($e->hint) ? $e->hint: '',
+                    'details' => isset($e->details) ? $e->details : '',
+                    'hint'    => isset($e->hint) ? $e->hint : '',
                     'code'    => is_null($e) ? $e->getCode() : null,
                 ], null, is_null($e) ? $e->response->getStatusCode() : null);
-			}
+            }
 
-			throw $e;
-        
+            throw $e;
         }
-        
-
-        
-       
 
         if (curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
             if ($this->method == 'HEAD') {

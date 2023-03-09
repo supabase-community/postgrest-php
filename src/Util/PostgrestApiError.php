@@ -16,7 +16,7 @@ class PostgrestApiError extends PostgrestError
         $this->code = $code;
         $this->details = $details;
         $this->hint = $hint;
-        $this->message = $message;        
+        $this->message = $message;
         $this->response = $response;
         $this->name = 'PostgrestApiError';
     }

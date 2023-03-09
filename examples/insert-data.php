@@ -11,6 +11,3 @@ $response = $client->from('users')->insert(['first_name'=> 'New', 'last_name' =>
 print_r($response->getStatusCode());
 print_r($response->getReasonPhrase());
 print_r($response->getProtocolVersion());
-
-
-

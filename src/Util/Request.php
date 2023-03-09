@@ -31,7 +31,7 @@ class Request
             $response = $error->getResponse();
             $data = json_decode($response->getBody(), true);
             print_r($data);
-            $error = new PostgrestApiError($data['code'], $data['details'], $data['hint'], $data['message'], $response );
+            $error = new PostgrestApiError($data['code'], $data['details'], $data['hint'], $data['message'], $response);
         } else {
             $error = new PostgrestUnknownError($error->getMessage(), $error->getCode());
         }

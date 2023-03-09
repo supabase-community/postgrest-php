@@ -22,8 +22,7 @@ class PostgrestClient
 
     public function __construct($reference_id, $api_key, $opts = [], $domain = '', $schema = '', $path = '')
     {
-
-        $this->url = $reference_id ?  Url::fromString($schema.$reference_id.$domain) : Url::fromString($schema.$reference_id.$domain);
+        $this->url = $reference_id ? Url::fromString($schema.$reference_id.$domain) : Url::fromString($schema.$reference_id.$domain);
         $headers = ['Authorization' => "Bearer {$api_key}", 'apikey'=>$api_key];
         $this->headers = array_merge(Constants::getDefaultHeaders(), $headers);
         $this->schema = $schema;
