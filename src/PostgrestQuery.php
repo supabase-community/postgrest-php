@@ -17,7 +17,7 @@ class PostgrestQuery
 
     public function select($columns = '*', $opts = [])
     {
-        $method = isset($opts->head) ? 'HEAD' : 'GET';
+        $method = isset($opts['head']) ? 'HEAD' : 'GET';
         $quoted = false;
 
         $cleanedColumns = join('', array_map(function ($c) {
@@ -33,8 +33,8 @@ class PostgrestQuery
 
         $this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
 
-        if (isset($opts->count)) {
-            $this->headers['Prefer'] = 'count='.$opts->count;
+        if (isset($opts['count'])) {
+            $this->headers['Prefer'] = 'count='.$opts['count'];
         }
 
         return new PostgrestFilter($this->reference_id, $this->api_key, [
