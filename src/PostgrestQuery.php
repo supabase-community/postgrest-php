@@ -38,7 +38,7 @@ class PostgrestQuery
         $this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
 
         if (isset($opts['count'])) {
-            $this->headers['Prefer'] = 'count=' . $opts['count'];
+            $this->headers['Prefer'] = 'count='.$opts['count'];
         }
 
         return new PostgrestFilter($this->reference_id, $this->api_key, [
@@ -58,7 +58,7 @@ class PostgrestQuery
         $prefersHeaders = [];
 
         if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count=' . $opts['count']);
+            array_push($prefersHeaders, 'count='.$opts['count']);
         }
 
         if (isset($this->headers['Prefer'])) {
@@ -68,7 +68,6 @@ class PostgrestQuery
         $this->headers['Prefer'] = join(',', $prefersHeaders);
 
         if (is_array($values)) {
-
             $columns = array_reduce($values, function ($acc, $x) {
                 print_r($x);
                 if (is_array($x)) {
@@ -101,7 +100,7 @@ class PostgrestQuery
     {
         $method = 'POST';
         $ignoreDuplicates = isset($opts['ignoreDuplicates']) && isset($opts['ignoreDuplicates']) ? true : false; // or false depending on your requirements
-        $prefersHeaders = array("resolution=".($ignoreDuplicates ? "ignore" : "merge")."-duplicates");
+        $prefersHeaders = ['resolution='.($ignoreDuplicates ? 'ignore' : 'merge').'-duplicates'];
 
         //$prefersHeaders = ['resolution=' . (isset($opts['ignoreDuplicates']) && $opts['ignoreDuplicates'] ? 'ignore' : 'merge') . '-duplicates'];
         if (isset($opts['onConflict'])) {
@@ -111,7 +110,7 @@ class PostgrestQuery
         $body = $values;
 
         if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count=' . $opts['count']);
+            array_push($prefersHeaders, 'count='.$opts['count']);
         }
 
         if (isset($this->headers['Prefer'])) {
@@ -137,7 +136,7 @@ class PostgrestQuery
         $prefersHeaders = [];
 
         if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count=' . $opts['count']);
+            array_push($prefersHeaders, 'count='.$opts['count']);
         }
 
         if (isset($this->headers['Prefer'])) {
@@ -163,7 +162,7 @@ class PostgrestQuery
         $prefersHeaders = [];
 
         if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count=' . $opts['count']);
+            array_push($prefersHeaders, 'count='.$opts['count']);
         }
 
         if (isset($this->headers['Prefer'])) {
