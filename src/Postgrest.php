@@ -43,15 +43,16 @@ class Postgrest
             $this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
         }
 
-
         try {
+            print_r($this->url->__toString());
             $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
             $error = null;
             $count = 0;
             $status = $response->getStatusCode();
             $statusText = $response->getReasonPhrase();
             $body = json_decode($response->getBody(), true);
-
+            $data = [];
+            //print_r($body);
 
             if ($this->method != 'HEAD') {
                 if ($body != '') {
@@ -66,7 +67,7 @@ class Postgrest
                     }
                 }
             }
-            
+
             $countHeader = isset($this->headers['Prefer']) ? preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], $matches) : null;
             $contentRange = $response->getHeader('content-range')[0];
             if ($countHeader && $contentRange) {
@@ -95,7 +96,7 @@ class Postgrest
             throw $e;
         }
 
-        if(false) {
+        if (false) {
             try {
                 $error = json_decode($body);
             } catch (Exception $e) {
@@ -106,7 +107,7 @@ class Postgrest
                 $error = null;
                 $status = 200;
                 $statusText = 'OK';
-            }            
+            }
         }
 
         $postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
