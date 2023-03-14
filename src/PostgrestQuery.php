@@ -116,7 +116,7 @@ class PostgrestQuery
             array_unshift($prefersHeaders, $this->headers['Prefer']);
         }
         $this->headers['Prefer'] = join(',', $prefersHeaders);
-        
+
         return new PostgrestFilter($this->reference_id, $this->api_key, [
             'url'        => $this->url,
             'headers'    => $this->headers,

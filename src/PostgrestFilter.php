@@ -33,8 +33,9 @@ class PostgrestFilter extends PostgrestTransform
     }
 
     public function lt($column, $value)
-    {  
+    {
         $this->url = $this->url->withQueryParameters([$column => 'lt.'.$value]);
+
         return $this;
     }
 
@@ -200,5 +201,4 @@ class PostgrestFilter extends PostgrestTransform
 
         return $this;
     }
-
 }

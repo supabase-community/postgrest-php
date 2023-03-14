@@ -34,15 +34,14 @@ class PostgrestTransform extends Postgrest
 
     public function order($column, $opts = ['ascending' => true])
     {
-
         print_r($this->url->getAllQueryParameters());
         $key = isset($opts['foreignTable']) ? $opts['foreignTable'].'.order' : 'order';
-        
+
         $existingOrder = $this->url->getQueryParameter($key);
         print_r($existingOrder);
         $this->url = $this->url->withQueryParameters([$key, $existingOrder ? $existingOrder.',' : ''.$column.($opts['ascending'] ? 'asc' : 'desc').(isset($opts['nullsFirst']) && $opts['nullsFirst'] ? '.nullsfirst' : '.nullslast')]);
         //$this->url = $this->url->withQueryParameters([$column => 'neq.'.$value]);
-       // print_r($this->url->getAllQueryParameters());
+        // print_r($this->url->getAllQueryParameters());
 
         return $this;
     }
