@@ -7,7 +7,7 @@ class Postgrest
 {
     private $method;
     public $url;
-    private $headers;
+    public $headers;
     private $body;
     private $schema;
     private $shouldThrowOnError;
@@ -44,7 +44,8 @@ class Postgrest
         }
 
         try {
-            print_r($this->url->__toString());
+            //print_r($this->headers);
+            //print_r($this->url->__toString());
             $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
             $error = null;
             $count = 0;

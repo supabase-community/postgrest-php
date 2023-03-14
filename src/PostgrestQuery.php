@@ -69,7 +69,6 @@ class PostgrestQuery
 
         if (is_array($values)) {
             $columns = array_reduce($values, function ($acc, $x) {
-                print_r($x);
                 if (is_array($x)) {
                     return array_merge($acc, array_keys($x));
                 }
@@ -117,7 +116,7 @@ class PostgrestQuery
             array_unshift($prefersHeaders, $this->headers['Prefer']);
         }
         $this->headers['Prefer'] = join(',', $prefersHeaders);
-
+        
         return new PostgrestFilter($this->reference_id, $this->api_key, [
             'url'        => $this->url,
             'headers'    => $this->headers,
@@ -126,7 +125,7 @@ class PostgrestQuery
             'method'     => $method,
             'body'       => $body,
             'allowEmpty' => false,
-        ]);
+        ], $this->headers);
     }
 
     public function update($values, $opts = [])

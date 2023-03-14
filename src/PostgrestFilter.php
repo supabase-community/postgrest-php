@@ -1,7 +1,5 @@
 <?php
 
-use Spatie\Url\QueryParameterBag;
-
 $FilterOperators = ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in', 'cs', 'cd', 'sl', 'sr', 'nxr', 'nxl', 'adj', 'ov', 'fts', 'plfts', 'phfts', 'wfts'];
 
 class PostgrestFilter extends PostgrestTransform
@@ -35,12 +33,8 @@ class PostgrestFilter extends PostgrestTransform
     }
 
     public function lt($column, $value)
-    {   //print_r($this->url->getQuery());
-        //$this->getParams($this->url->getQuery());
-        $oldparams = $this->getParams($this->url->getQuery());
-        $this->url = $this->url->withQueryParameters(array_merge($oldparams, [$column => 'lt.'.$value]));
-        print_r($this->url->getQuery());
-
+    {  
+        $this->url = $this->url->withQueryParameters([$column => 'lt.'.$value]);
         return $this;
     }
 
@@ -207,8 +201,4 @@ class PostgrestFilter extends PostgrestTransform
         return $this;
     }
 
-    private function getParams(string $params)
-    {
-        return QueryParameterBag::fromString($params)->all();
-    }
 }
