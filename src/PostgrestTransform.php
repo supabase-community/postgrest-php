@@ -34,32 +34,35 @@ class PostgrestTransform extends Postgrest
 
     public function order($column, $opts = ['ascending' => true])
     {
-        print_r($this->url->getAllQueryParameters());
+       // print_r($this->url->getAllQueryParameters());
         $key = isset($opts['foreignTable']) ? $opts['foreignTable'].'.order' : 'order';
 
         $existingOrder = $this->url->getQueryParameter($key);
-        print_r($existingOrder);
-        $this->url = $this->url->withQueryParameters([$key, $existingOrder ? $existingOrder.',' : ''.$column.($opts['ascending'] ? 'asc' : 'desc').(isset($opts['nullsFirst']) && $opts['nullsFirst'] ? '.nullsfirst' : '.nullslast')]);
+        print_r('<');
+        print_r([$existingOrder]);
+        print_r('>');
+        
+        $this->url = $this->url->withQueryParameters([$key => $existingOrder ? $existingOrder.',' : ''.$column.'.'.($opts['ascending'] ? 'asc' : 'desc').(isset($opts['nullsFirst']) && $opts['nullsFirst'] ? '.nullsfirst' : '.nullslast')]);
         //$this->url = $this->url->withQueryParameters([$column => 'neq.'.$value]);
         // print_r($this->url->getAllQueryParameters());
 
         return $this;
     }
 
-    public function limit($count, $opts)
+    public function limit($count, $opts=[])
     {
-        $key = $opts->foreignTable ? $opts->foreignTable.'.limit' : 'limit';
-        $this->url->searchParams->set($key, strval($count));
+        $key = isset($opts['foreignTable']) ? $opts['foreignTable'].'.limit' : 'limit';
+        $this->url = $this->url->withQueryParameters([$key => strval($count)]);
 
         return $this;
     }
 
-    public function range($from, $to, $opts)
+    public function range($from, $to, $opts=[])
     {
-        $keyOffset = $opts->foreignTable ? $opts->foreignTable.'.offset' : 'offset';
-        $keyLimit = $opts->foreignTable ? $opts->foreignTable.'.limit' : 'limit';
-        $this->url->searchParams->set($keyOffset, strval($from));
-        $this->url->searchParams->set($keyLimit, strval($to - $from + 1));
+        $keyOffset = isset($opts['foreignTable']) ? $opts['foreignTable'].'.offset' : 'offset';
+        $keyLimit = isset($opts['foreignTable']) ? $opts['foreignTable'].'.limit' : 'limit';
+        $this->url = $this->url->withQueryParameters([$keyOffset => strval($from)]);
+        $this->url = $this->url->withQueryParameters([$keyLimit => strval($to - $from + 1)]);
 
         return $this;
     }
@@ -120,13 +123,12 @@ class PostgrestTransform extends Postgrest
 
     public function rollback()
     {
-        if (count(trim($_a = $this->headers['Prefer'] ? $_a : '')) > 0) {
-            $this->headers['Prefer'] += ',tx=rollback';
-        } else {
-            $this->headers['Prefer'] = ',tx=rollback';
-        }
-
-        return $this;
+        if (strlen(trim($this->headers['Prefer'] ?? '')) > 0) {
+            $this->headers['Prefer'] .= ',tx=rollback';
+          } else {
+            $this->headers['Prefer'] = 'tx=rollback';
+          }
+          return $this;
     }
 
     public function returns()

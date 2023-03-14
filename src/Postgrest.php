@@ -12,7 +12,7 @@ class Postgrest
     private $schema;
     private $shouldThrowOnError;
     private $signal;
-    private $allowEmpty;
+    public $allowEmpty;
     private $reference_id;
     private $api_key;
 
@@ -42,30 +42,32 @@ class Postgrest
         if ($this->method != 'GET' || $this->method != 'HEAD') {
             $this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
         }
-
+        $data = null;
+        $count = null;
         try {
             //print_r($this->headers);
-            //print_r($this->url->__toString());
+            print_r($this->url->__toString());
             $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
             $error = null;
-            $count = 0;
+            
             $status = $response->getStatusCode();
             $statusText = $response->getReasonPhrase();
-            $body = json_decode($response->getBody(), true);
-            $data = [];
+            //$body = json_decode($response->getBody(), true);
+            
             //print_r($body);
-
             if ($this->method != 'HEAD') {
-                if ($body != '') {
-                    if (isset($this->headers['Accept'])) {
-                        if ($this->headers['Accept'] == 'text/csv') {
-                            $data = $body;
-                        } elseif ($this->headers['Accept'] && strpost($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false) {
-                            $data = $body;
-                        }
-                    } else {
-                        $data = $body;
-                    }
+                $body = $response->getBody();
+                if ($body === '') {
+                    // Prefer: return=minimal
+                } elseif ($this->headers['Accept'] === 'text/csv') {
+                    $data = $body->getContents();
+                } elseif (
+                    isset($this->headers['Accept']) &&
+                    strpos($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false
+                ) {
+                    $data = $body->getContents();
+                } else {
+                    $data = json_decode($body, true);
                 }
             }
 
@@ -86,6 +88,46 @@ class Postgrest
             return $response;
         } catch (\Exception $e) {
             if (PostgrestError::isPostgrestError($e)) {
+                
+                if ($e->response){
+                    $body = $e->response->getBody();
+                    $error = json_decode($body, true);
+                  
+                    // Workaround for https://github.com/supabase/postgrest-js/issues/295
+                    if (is_array($error) && $e->response->getStatusCode() === 404) {
+                      $data = [];
+                      $error = null;
+                      $status = 200;
+                      $statusText = 'OK';
+                    }
+                  } else {
+                    // Workaround for https://github.com/supabase/postgrest-js/issues/295
+                    if ($e->response->getStatusCode() === 404 && $body === '') {
+                      $status = 204;
+                      $statusText = 'No Content';
+                    } else {
+                      $error = [
+                        'message' => $body,
+                      ];
+                    }
+                  }
+                //$error = $e->response->getStatusCode();
+
+                if ($error && $this->allowEmpty && strpos($error['details'], 'Results contain 0 rows') !== false) {
+                    $error = null;
+                    $status = 200;
+                    $statusText = 'OK';                    
+                }
+
+                if ($error && $this->shouldThrowOnError){
+                    throw $e;
+                }
+
+                $postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
+                return $postgrestResponse;
+                  
+
+                
                 return new PostgrestResponse(null, [
                     'message' => $e->getMessage(),
                     'details' => isset($e->details) ? $e->details : '',
@@ -96,24 +138,6 @@ class Postgrest
 
             throw $e;
         }
-
-        if (false) {
-            try {
-                $error = json_decode($body);
-            } catch (Exception $e) {
-                $error = ['message' => $body];
-            }
-
-            if ($error && $this->allowEmpty && strpos($error->details, 'Results contain 0 rows')) {
-                $error = null;
-                $status = 200;
-                $statusText = 'OK';
-            }
-        }
-
-        $postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
-
-        return $postgrestResponse;
     }
 }
 
