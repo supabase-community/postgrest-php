@@ -21,5 +21,5 @@ final class PostgrestTest extends TestCase
         $path = 'rest/v1/';
         $opts = [];
         $this->client = new PostgrestClient($reference_id, $api_key, $opts, $domain, $scheme, $path);
-    }   
+    }
 }
