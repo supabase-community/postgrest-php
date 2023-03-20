@@ -23,11 +23,11 @@ final class PostgrestClientTest extends TestCase
         $this->client = new PostgrestClient($reference_id, $api_key, $opts, $domain, $scheme, $path);
     }
 
-    public function testBulkProcessing(): void 
+    public function testBulkProcessing(): void
     {
         $result = $this->client->rpc('add_one_each', ['arr'=> [1, 2, 3]])->execute();
-        $this->assertEquals('200',$result->status);
-        $this->assertEquals('OK',$result->statusText);
+        $this->assertEquals('200', $result->status);
+        $this->assertEquals('OK', $result->statusText);
     }
 
     /**
@@ -44,7 +44,7 @@ final class PostgrestClientTest extends TestCase
         $this->assertArrayHasKey('created_at', $result->data[0]);
     }
 
-    public static function providerArray() : array
+    public static function providerArray(): array
     {
         return[
             ['Algeria'],
@@ -53,5 +53,4 @@ final class PostgrestClientTest extends TestCase
             ['Armenia'],
         ];
     }
-    
 }

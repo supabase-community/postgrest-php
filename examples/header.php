@@ -11,4 +11,3 @@ $reference_id = getenv('REFERENCE_ID');
 $scheme = 'https://';
 $domain = '.supabase.co/';
 $path = 'rest/v1/';
-
