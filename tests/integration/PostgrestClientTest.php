@@ -23,10 +23,35 @@ final class PostgrestClientTest extends TestCase
         $this->client = new PostgrestClient($reference_id, $api_key, $opts, $domain, $scheme, $path);
     }
 
-    public function testFetchData(): void
+    public function testBulkProcessing(): void 
     {
-        $result = $this->client->from('countries')->select()->execute();
+        $result = $this->client->rpc('add_one_each', ['arr'=> [1, 2, 3]])->execute();
+        $this->assertEquals('200',$result->status);
+        $this->assertEquals('OK',$result->statusText);
+    }
+
+    /**
+     * @dataProvider providerArray
+     */
+    public function testFetchData($data): void
+    {
+        $result = $this->client->from('countries')->select()->eq('name', $data)->execute();
         $this->assertEquals('200', $result->status);
         $this->assertEquals('OK', $result->statusText);
+        $this->assertCount(3, $result->data[0]);
+        $this->assertArrayHasKey('id', $result->data[0]);
+        $this->assertArrayHasKey('name', $result->data[0]);
+        $this->assertArrayHasKey('created_at', $result->data[0]);
     }
+
+    public static function providerArray() : array
+    {
+        return[
+            ['Algeria'],
+            ['Germany'],
+            ['Indonesia'],
+            ['Armenia'],
+        ];
+    }
+    
 }
