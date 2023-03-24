@@ -4,10 +4,14 @@ declare(strict_types=1);
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
 
-require __DIR__.'../../src/PostgrestFilter.php';
+use function PHPUnit\Framework\assertCount;
 
-final class PostgrestTest extends TestCase
+require __DIR__.'/../../src/PostgrestFilter.php';
+
+final class PostgrestFilterTest extends TestCase
 {
+    private $filter;
+
     public function setup(): void
     {
         parent::setUp();
@@ -16,19 +20,14 @@ final class PostgrestTest extends TestCase
         $dotenv->load();
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
-        $scheme = 'https://';
-        $domain = '.supabase.co/';
-        $path = 'rest/v1/';
-        $opts = [];
-        $filter = new PostgrestFilter($reference_id, $api_key, $opts = [], '.supabase.co/', 'https://', 'rest/v1/');
+        $this->filter = new PostgrestFilter($reference_id, $api_key, $opts = [], '.supabase.co/', 'https://', 'rest/v1/');
     }
 
-    /**
-     * @dataProvider countryProvider
-     */
-    public function testEq($data): void
+    public function testEq(): void
     {
-        $result = $this->filter->eq('name', $data)->execute();
-        $this->assertEquals('result', $result);
+        $result = $this->filter->eq('name', 'Algeria');
+        assertCount(13,$result);
+        var_dump($result);
+        ob_flush();
     }
 }
