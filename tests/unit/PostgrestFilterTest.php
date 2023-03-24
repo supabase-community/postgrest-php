@@ -3,11 +3,8 @@
 declare(strict_types=1);
 require 'vendor/autoload.php';
 
-use PhpParser\Node\Expr\Cast\Object_;
-use PhpParser\Node\Name;
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 
 require __DIR__.'/../../src/PostgrestFilter.php';
@@ -99,25 +96,25 @@ final class PostgrestFilterTest extends TestCase
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-    }  
-    
+    }
+
     public function testIs(): void
     {
         $result = $this->filter->is('name', 'algeria');
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-    }   
+    }
 
     public function testIn(): void
     {
-        $result = $this->filter->in('Algeria', ['countries','id']);
+        $result = $this->filter->in('Algeria', ['countries', 'id']);
         print_r($result);
         ob_flush();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-    }   
+    }
 
     public function testContains(): void
     {
@@ -130,7 +127,7 @@ final class PostgrestFilterTest extends TestCase
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-    }   
+    }
 
     public function testContainedBy(): void
     {
@@ -143,6 +140,5 @@ final class PostgrestFilterTest extends TestCase
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-    }   
-
+    }
 }
