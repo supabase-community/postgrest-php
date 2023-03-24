@@ -38,8 +38,8 @@ final class PostgrestTest extends TestCase
     }
 
     /**
-    * @dataProvider countryProvider
-    */
+     * @dataProvider countryProvider
+     */
     public function testNeq($data): void
     {
         $result = $this->client->from('countries')->select()->neq('name', $data)->execute();
@@ -52,8 +52,8 @@ final class PostgrestTest extends TestCase
     }
 
     /**
-    * @dataProvider idProvider
-    */
+     * @dataProvider idProvider
+     */
     public function testGt($data): void
     {
         $result = $this->client->from('countries')->select()->gt('id', $data)->execute();
@@ -64,9 +64,10 @@ final class PostgrestTest extends TestCase
         $this->assertArrayHasKey('name', $result->data[0]);
         $this->assertArrayHasKey('created_at', $result->data[0]);
     }
-        /**
-    * @dataProvider idProvider
-    */
+
+    /**
+     * @dataProvider idProvider
+     */
     public function testGte($data): void
     {
         $result = $this->client->from('countries')->select()->gte('id', $data)->execute();
@@ -79,8 +80,8 @@ final class PostgrestTest extends TestCase
     }
 
     /**
-    * @dataProvider idProvider
-    */
+     * @dataProvider idProvider
+     */
     public function testLessThan($data): void
     {
         $result = $this->client->from('countries')->select()->lt('id', $data)->execute();
@@ -93,9 +94,10 @@ final class PostgrestTest extends TestCase
         $this->assertArrayHasKey('name', $result->data[0]);
         $this->assertArrayHasKey('created_at', $result->data[0]);
     }
+
     /**
-    * @dataProvider idProvider
-    */
+     * @dataProvider idProvider
+     */
     public function testLte($data): void
     {
         $result = $this->client->from('countries')->select()->lte('id', $data)->execute();
@@ -116,6 +118,7 @@ final class PostgrestTest extends TestCase
             ['Armenia'],
         ];
     }
+
     public static function idProvider(): array
     {
         return[

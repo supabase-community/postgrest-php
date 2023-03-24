@@ -1,9 +1,9 @@
 <?php
 
-use Supabase\Util\PostgrestError;
-use Supabase\Util\Request;
 use Spatie\Url\Url;
 use Supabase\Util\Constants;
+use Supabase\Util\PostgrestError;
+use Supabase\Util\Request;
 
 class Postgrest
 {

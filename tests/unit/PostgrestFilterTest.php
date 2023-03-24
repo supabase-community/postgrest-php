@@ -3,12 +3,11 @@
 declare(strict_types=1);
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
+
 require __DIR__.'../../src/PostgrestFilter.php';
 
 final class PostgrestTest extends TestCase
 {
-    
-
     public function setup(): void
     {
         parent::setUp();
@@ -30,8 +29,6 @@ final class PostgrestTest extends TestCase
     public function testEq($data): void
     {
         $result = $this->filter->eq('name', $data)->execute();
-        $this->assertEquals('result',$result);
+        $this->assertEquals('result', $result);
     }
-
-    
 }
