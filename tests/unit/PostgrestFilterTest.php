@@ -26,7 +26,7 @@ final class PostgrestFilterTest extends TestCase
     public function testEq(): void
     {
         $result = $this->filter->eq('name', 'Algeria');
-        assertCount(13,$result);
+        assertCount(13, $result);
         var_dump($result);
         ob_flush();
     }
