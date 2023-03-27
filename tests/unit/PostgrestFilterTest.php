@@ -36,14 +36,14 @@ final class PostgrestFilterTest extends TestCase
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        assertEquals('name=eq.Algeria',$params[6]->getValue($result->{'url'}));
+        assertEquals('name=eq.Algeria', $params[6]->getValue($result->{'url'}));
 
         print_r($url->getValue($result->{'url'}));
         echo "\n\n";
         print_r($query->getValue($result->{'url'}));
         echo "\n\n";
-        print $params[6]->getValue($result->{'url'});
-    
+        echo $params[6]->getValue($result->{'url'});
+
         ob_flush();
     }
 
