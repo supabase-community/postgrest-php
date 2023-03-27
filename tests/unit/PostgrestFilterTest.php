@@ -3,10 +3,8 @@
 declare(strict_types=1);
 require 'vendor/autoload.php';
 
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 
 require __DIR__.'/../../src/PostgrestFilter.php';
@@ -237,6 +235,7 @@ final class PostgrestFilterTest extends TestCase
         //assertEquals('',$query->getValue($result->{'url'}));
         //print_r($params->getValue($result->{'url'}));
     }
+
     public function testRangeAdjacent(): void
     {
         $result = $this->filter->rangeAdjacent('name', 'Algeria');
@@ -251,6 +250,7 @@ final class PostgrestFilterTest extends TestCase
         //assertEquals('',$query->getValue($result->{'url'}));
         //print_r($params->getValue($result->{'url'}));
     }
+
     public function testOverlaps(): void
     {
         $result = $this->filter->overlaps('name', 'Algeria');
@@ -268,8 +268,6 @@ final class PostgrestFilterTest extends TestCase
         ob_flush();
     }
 
-  
-    
     public function testMatch(): void
     {
         $result = $this->filter->match('name', 'Algeria');

@@ -75,7 +75,7 @@ class PostgrestFilter extends PostgrestTransform
             } else {
                 return strval($s);
             }
-         }, $values));
+        }, $values));
 
         $this->url = $this->url->withQueryParameters([$column => 'in.('.$cleanedValues.')']);
 
