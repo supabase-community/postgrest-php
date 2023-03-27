@@ -30,16 +30,20 @@ final class PostgrestFilterTest extends TestCase
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
         $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
+
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
+        assertEquals('name=eq.Algeria',$params[6]->getValue($result->{'url'}));
+
         print_r($url->getValue($result->{'url'}));
         echo "\n\n";
         print_r($query->getValue($result->{'url'}));
-        //($params->getValue($result->{'url'}));
+        echo "\n\n";
+        print $params[6]->getValue($result->{'url'});
+    
         ob_flush();
     }
 
@@ -52,7 +56,7 @@ final class PostgrestFilterTest extends TestCase
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
-        //assertEquals('eq.Algeria', $result->{'url'}->{'query'});
+        assertEquals('eq.Algeria', $result->{'url'}->{'query'});
         ob_flush();
     }
 
