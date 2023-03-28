@@ -32,7 +32,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=eq.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -45,7 +45,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=neq.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -58,7 +58,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('id=gt.1', $params[6]->getValue($result->{'url'}));
     }
@@ -71,7 +71,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('id=gte.1', $params[6]->getValue($result->{'url'}));
     }
@@ -84,7 +84,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('id=lt.1', $params[6]->getValue($result->{'url'}));
     }
@@ -97,7 +97,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('id=lte.1', $params[6]->getValue($result->{'url'}));
     }
@@ -110,7 +110,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=Like.Algeria', $params[6]->getValue($result->{'url'}));
 
@@ -125,7 +125,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=ilike.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -138,7 +138,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=is.algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -151,9 +151,9 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        assertEquals('Algeria=in.(countries,id)', $params[6]->getValue($result->{'url'}));
+        assertEquals('Algeria => in.(countries,id)', $params[6]->getValue($result->{'url'}));
 
         //
     }
@@ -166,7 +166,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=cs.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -179,7 +179,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=cd.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -192,7 +192,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=sr.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -205,7 +205,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=nxl.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -218,7 +218,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=sl.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -231,7 +231,7 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=nxr.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -244,7 +244,6 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=adj.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -257,7 +256,6 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=ov.Algeria', $params[6]->getValue($result->{'url'}));
     }
@@ -270,8 +268,49 @@ final class PostgrestFilterTest extends TestCase
         $params = $reflection->getProperties();
         assertEquals('rest/v1/', $result->{'path'});
         assertEquals('.supabase.co/', $result->{'domain'});
-        assertEquals('https://', $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('', $params[6]->getValue($result->{'url'}));
+    }
+
+    public function testNot(): void
+    {
+        $result = $this->filter->not('name','IS', 'Algeria');
+        $reflection = new ReflectionClass($result->{'url'});
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
+        assertEquals('rest/v1/', $result->{'path'});
+        assertEquals('.supabase.co/', $result->{'domain'});
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=not.IS.Algeria', $params[6]->getValue($result->{'url'}));
+    }
+
+    public function testOr(): void
+    {
+        $result = $this->filter->or('name', 'Algeria');
+        $reflection = new ReflectionClass($result->{'url'});
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
+        assertEquals('rest/v1/', $result->{'path'});
+        assertEquals('.supabase.co/', $result->{'domain'});
+        assertEquals('https',  $params[0]->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('', $params[6]->getValue($result->{'url'}));
+
+
+        // 
+
+
+    }
+
+    public function testFilter(): void
+    {
+        $result = $this->filter->filter('name','IS', 'Algeria');
+        $reflection = new ReflectionClass($result->{'url'});
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
+        assertEquals('rest/v1/', $result->{'path'});
+        assertEquals('.supabase.co/', $result->{'domain'});
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=IS.Algeria', $params[6]->getValue($result->{'url'}));
     }
 }
