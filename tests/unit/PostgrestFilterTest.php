@@ -115,9 +115,6 @@ final class PostgrestFilterTest extends TestCase
         assertEquals('name=Like.Algeria', $params[6]->getValue($result->{'url'}));
 
         //
-
-
-        
     }
 
     public function testiLike(): void
@@ -158,10 +155,7 @@ final class PostgrestFilterTest extends TestCase
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('Algeria=in.(countries,id)', $params[6]->getValue($result->{'url'}));
 
-
-        // 
-
-
+        //
     }
 
     public function testContains(): void
