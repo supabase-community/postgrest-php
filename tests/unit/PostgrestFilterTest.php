@@ -29,153 +29,165 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->eq('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
         $params = $reflection->getProperties();
-
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=eq.Algeria', $params[6]->getValue($result->{'url'}));
-
-        print_r($url->getValue($result->{'url'}));
-        echo "\n\n";
-        print_r($query->getValue($result->{'url'}));
-        echo "\n\n";
-        echo $params[6]->getValue($result->{'url'});
-
-        ob_flush();
     }
 
     public function testNeq(): void
     {
         $result = $this->filter->neq('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
-        assertEquals('eq.Algeria', $result->{'url'}->{'query'});
-        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=neq.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testGt(): void
     {
         $result = $this->filter->gt('id', '1');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
-        print_r($result);
-        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('id=gt.1', $params[6]->getValue($result->{'url'}));
     }
 
     public function testGte(): void
     {
         $result = $this->filter->gte('id', '1');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('id=gte.1', $params[6]->getValue($result->{'url'}));
     }
 
     public function testLt(): void
     {
         $result = $this->filter->lt('id', '1');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
-        print_r($result);
-        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('id=lt.1', $params[6]->getValue($result->{'url'}));
     }
 
     public function testLte(): void
     {
         $result = $this->filter->lte('id', '1');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('id=lte.1', $params[6]->getValue($result->{'url'}));
     }
 
     public function testLike(): void
     {
         $result = $this->filter->like('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
-        print_r($result);
-        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=Like.Algeria', $params[6]->getValue($result->{'url'}));
+
+        //
+
+
+        
     }
 
     public function testiLike(): void
     {
         $result = $this->filter->ilike('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=ilike.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testIs(): void
     {
         $result = $this->filter->is('name', 'algeria');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=is.algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testIn(): void
     {
         $result = $this->filter->in('Algeria', ['countries', 'id']);
-        print_r($result);
-        ob_flush();
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('Algeria=in.(countries,id)', $params[6]->getValue($result->{'url'}));
+
+
+        // 
+
+
     }
 
     public function testContains(): void
     {
         $result = $this->filter->contains('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=cs.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testContainedBy(): void
     {
         $result = $this->filter->containedBy('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
-        $property = $reflection->getProperty('host');
+        $url = $reflection->getProperty('host');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
-        assertEquals('gpdefvsxamnscceccczu.supabase.co', $property->getValue($result->{'url'}));
+        assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
+        assertEquals('name=cd.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testRangeGt(): void
@@ -183,18 +195,12 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->rangeGt('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
-        print_r($url->getValue($result->{'url'}));
-        echo "\n\n";
-        print_r($query->getValue($result->{'url'}));
-        //($params->getValue($result->{'url'}));
-        ob_flush();
+        assertEquals('name=sr.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testRangeGte(): void
@@ -202,13 +208,12 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->rangeGte('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
+        assertEquals('name=nxl.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testRangeLt(): void
@@ -216,13 +221,12 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->rangeLt('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
+        assertEquals('name=sl.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testRangeLte(): void
@@ -230,14 +234,12 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->rangeLte('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
-        //print_r($params->getValue($result->{'url'}));
+        assertEquals('name=nxr.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testRangeAdjacent(): void
@@ -245,14 +247,12 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->rangeAdjacent('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
-        //print_r($params->getValue($result->{'url'}));
+        assertEquals('name=adj.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testOverlaps(): void
@@ -260,16 +260,12 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->overlaps('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
-        //print_r($params->getValue($result->{'url'}));
-        print_r($query->getValue($result->{'url'}));
-        ob_flush();
+        assertEquals('name=ov.Algeria', $params[6]->getValue($result->{'url'}));
     }
 
     public function testMatch(): void
@@ -277,15 +273,11 @@ final class PostgrestFilterTest extends TestCase
         $result = $this->filter->match('name', 'Algeria');
         $reflection = new ReflectionClass($result->{'url'});
         $url = $reflection->getProperty('host');
-        $query = $reflection->getProperty('query');
-        //$params = $reflection->getProperty('parameters');
+        $params = $reflection->getProperties();
         assertEquals($this->filter->path, $result->{'path'});
         assertEquals($this->filter->domain, $result->{'domain'});
         assertEquals($this->filter->scheme, $result->{'scheme'});
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
-        //assertEquals('',$query->getValue($result->{'url'}));
-        //print_r($params->getValue($result->{'url'}));
-        print_r($query->getValue($result->{'url'}));
-        ob_flush();
+        assertEquals('', $params[6]->getValue($result->{'url'}));
     }
 }
