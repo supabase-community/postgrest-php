@@ -10,6 +10,7 @@ require __DIR__.'/../../src/PostgrestFilter.php';
 final class PostgrestQueryTest extends TestCase
 {
     private $query;
+    public $url;
 
     public function setup(): void
     {
@@ -19,13 +20,13 @@ final class PostgrestQueryTest extends TestCase
         $dotenv->load();
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
-        $url = new PostgrestQuery::$url();
+        $url = $this->url;
         $this->query = new PostgrestQuery($url, $reference_id, $api_key, $opts = []);
     }
 
     public function testSelect()
     {
-        $result = $this->query->select($columns = '*', $opts = []);
+        $result = $this->query->select();
         print_r($result);
         ob_flush();
     }
