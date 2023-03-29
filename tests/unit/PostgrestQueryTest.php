@@ -5,8 +5,6 @@ require 'vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
 
-use function PHPUnit\Framework\assertEquals;
-
 require __DIR__.'/../../src/PostgrestFilter.php';
 
 final class PostgrestQueryTest extends TestCase
@@ -21,11 +19,12 @@ final class PostgrestQueryTest extends TestCase
         $dotenv->load();
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
-        $url = new PostgrestQuery::$url;
+        $url = new PostgrestQuery::$url();
         $this->query = new PostgrestQuery($url, $reference_id, $api_key, $opts = []);
     }
 
-    public function testSelect(){
+    public function testSelect()
+    {
         $result = $this->query->select($columns = '*', $opts = []);
         print_r($result);
         ob_flush();

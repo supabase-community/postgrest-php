@@ -22,7 +22,7 @@ final class PostgrestClientTest extends TestCase
         $opts = [];
         $this->client = new PostgrestClient($reference_id, $api_key, $opts, $domain, $scheme, $path);
     }
-    
+
     public function testCanBeCreatedFromValidUrl(): void
     {
         $this->assertInstanceOf(
