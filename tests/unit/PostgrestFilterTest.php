@@ -35,6 +35,9 @@ final class PostgrestFilterTest extends TestCase
         assertEquals('https', $params[0]->getValue($result->{'url'}));
         assertEquals('gpdefvsxamnscceccczu.supabase.co', $url->getValue($result->{'url'}));
         assertEquals('name=eq.Algeria', $params[6]->getValue($result->{'url'}));
+        assertEquals('https://gpdefvsxamnscceccczu.supabase.co?name=eq.Algeria',$result->url->__toString());
+        print_r($result->url->__toString());
+        ob_flush();
     }
 
     public function testNeq(): void
