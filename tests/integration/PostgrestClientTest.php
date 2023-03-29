@@ -43,6 +43,7 @@ final class PostgrestClientTest extends TestCase
         $this->assertArrayHasKey('name', $result->data[0]);
         $this->assertArrayHasKey('created_at', $result->data[0]);
     }
+
     public function testCanBeCreatedFromValidUrl(): void
     {
         $this->assertInstanceOf(
@@ -53,7 +54,7 @@ final class PostgrestClientTest extends TestCase
 
     public function testCanSelectTable(): void
     {
-        $result = $this->client->from('users');//->select()->url->__toString();
+        $result = $this->client->from('users'); //->select()->url->__toString();
         print_r($result);
         ob_flush();
         //assertSame($result, 'gpdefvsxamnscceccczu');
@@ -61,8 +62,6 @@ final class PostgrestClientTest extends TestCase
 
     public function testCanSelectColumns(): void
     {
-        
-
         $this->assertSame($client->from('users')->select('id, name')->url->__toString(), 'http://localhost:3000/users?select=id%2Cname');
     }
 

@@ -31,7 +31,6 @@ final class PostgrestClientTest extends TestCase
         assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/users', $result->url->__toString());
     }
 
-
     public function testCanRPC(): void
     {
         $result = $this->client->rpc('add_one');
