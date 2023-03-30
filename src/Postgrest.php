@@ -18,17 +18,17 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-    public function __construct($reference_id, $api_key, $opts = [], $domain = '', $scheme = '', $path = '')
+
+     public function __construct($reference_id, $api_key, $opts)
     {
-        $this->url = $reference_id ? Url::fromString($scheme.$reference_id.$domain) : Url::fromString($scheme.$reference_id.$domain);
-        $headers = ['Authorization' => "Bearer {$api_key}", 'apikey'=>$api_key];
-        $this->headers = array_merge(Constants::getDefaultHeaders(), $headers);
-        $this->schema = (isset($opts) && isset($opts['schema'])) && $opts['schema'];
-        $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
-        $this->reference_id = $reference_id;
-        $this->api_key = $api_key;
-        $this->domain = $domain;
-        $this->path = $path;
+        $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ?$opts['method'] : null;
+        $this->url = isset($opts['url']) ? $opts['url'] : "https://{$reference_id}.supabase.co/rest/v1";
+        $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
+        $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
+        $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
+        $this->signal = isset($opts['signal']) && $opts['signal'];
+        $this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
+        $this->body = isset($opts['body']) ? $opts['body'] : [];
     }
 
     public function execute()

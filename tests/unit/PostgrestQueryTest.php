@@ -5,6 +5,9 @@ require 'vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
 
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertSame;
+
 require __DIR__.'/../../src/PostgrestFilter.php';
 
 final class PostgrestQueryTest extends TestCase
@@ -22,6 +25,7 @@ final class PostgrestQueryTest extends TestCase
         $reference_id = getenv('REFERENCE_ID');
         $url = $this->url;
         $this->query = new PostgrestQuery($url, $reference_id, $api_key, $opts = []);
+        
     }
 
     public function testSelect()
@@ -29,5 +33,41 @@ final class PostgrestQueryTest extends TestCase
         $result = $this->query->select();
         print_r($result);
         ob_flush();
+    }
+
+    public function testInsert()
+    {
+        $result = $this->query->insert('countries');
+        print_r($result->url->__toString());
+        print_r($result);
+        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu',$result->url->__toString());
+    }
+
+    public function testUpsert()
+    {
+        $result = $this->query->upsert('countries');
+        print_r($result->url->__toString());
+        print_r($result);
+        ob_flush();
+        assertEquals('',$result);
+    }
+
+    public function testUpdate()
+    {
+        $result = $this->query->update('countries');
+        print_r($result->url->__toString());
+        print_r($result);
+        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu',$result->url->__toString());
+    }
+
+    public function testDelete()
+    {
+        $result = $this->query->delete('countries');
+        print_r($result->url->__toString());
+        print_r($result);
+        ob_flush();
+        assertEquals('gpdefvsxamnscceccczu',$result->url->__tostring());
     }
 }
