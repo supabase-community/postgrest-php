@@ -1,7 +1,5 @@
 <?php
 
-use Spatie\Url\Url;
-use Supabase\Util\Constants;
 use Supabase\Util\PostgrestError;
 use Supabase\Util\Request;
 
@@ -18,10 +16,9 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-
-     public function __construct($reference_id, $api_key, $opts)
+    public function __construct($reference_id, $api_key, $opts)
     {
-        $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ?$opts['method'] : null;
+        $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
         $this->url = isset($opts['url']) ? $opts['url'] : "https://{$reference_id}.supabase.co/rest/v1";
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) ? $opts['schema'] : '';

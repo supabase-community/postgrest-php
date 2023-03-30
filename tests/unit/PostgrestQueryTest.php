@@ -6,7 +6,6 @@ require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
 
 use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertSame;
 
 require __DIR__.'/../../src/PostgrestFilter.php';
 
@@ -25,7 +24,6 @@ final class PostgrestQueryTest extends TestCase
         $reference_id = getenv('REFERENCE_ID');
         $url = $this->url;
         $this->query = new PostgrestQuery($url, $reference_id, $api_key, $opts = []);
-        
     }
 
     public function testSelect()
@@ -41,7 +39,7 @@ final class PostgrestQueryTest extends TestCase
         print_r($result->url->__toString());
         print_r($result);
         ob_flush();
-        assertEquals('gpdefvsxamnscceccczu',$result->url->__toString());
+        assertEquals('gpdefvsxamnscceccczu', $result->url->__toString());
     }
 
     public function testUpsert()
@@ -50,7 +48,7 @@ final class PostgrestQueryTest extends TestCase
         print_r($result->url->__toString());
         print_r($result);
         ob_flush();
-        assertEquals('',$result);
+        assertEquals('', $result);
     }
 
     public function testUpdate()
@@ -59,7 +57,7 @@ final class PostgrestQueryTest extends TestCase
         print_r($result->url->__toString());
         print_r($result);
         ob_flush();
-        assertEquals('gpdefvsxamnscceccczu',$result->url->__toString());
+        assertEquals('gpdefvsxamnscceccczu', $result->url->__toString());
     }
 
     public function testDelete()
@@ -68,6 +66,6 @@ final class PostgrestQueryTest extends TestCase
         print_r($result->url->__toString());
         print_r($result);
         ob_flush();
-        assertEquals('gpdefvsxamnscceccczu',$result->url->__tostring());
+        assertEquals('gpdefvsxamnscceccczu', $result->url->__toString());
     }
 }
