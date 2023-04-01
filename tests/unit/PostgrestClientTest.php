@@ -18,7 +18,7 @@ final class PostgrestClientTest extends TestCase
         $dotenv->load();
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
-        $this->client = new PostgrestClient($reference_id, $api_key, $opts = [],$domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/');
+        $this->client = new PostgrestClient($reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/');
     }
 
     public function testFrom(): void

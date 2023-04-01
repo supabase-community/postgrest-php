@@ -7,7 +7,7 @@ class PostgrestFilter extends PostgrestTransform
     public function eq($column, $value)
     {
         $this->url = $this->url.$column.'=eq.'.$value;
-        
+
         return $this;
     }
 
@@ -77,7 +77,7 @@ class PostgrestFilter extends PostgrestTransform
             }
         }, $values));
 
-        $this->url = $this->url.$column.'=in.%28'.$cleanedValues.'%29'; 
+        $this->url = $this->url.$column.'=in.%28'.$cleanedValues.'%29';
 
         return $this;
     }
