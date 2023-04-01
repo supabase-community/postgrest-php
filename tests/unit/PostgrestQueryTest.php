@@ -23,6 +23,9 @@ final class PostgrestQueryTest extends TestCase
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
         $url = $this->url;
+        $this->headers = (isset($opts) && isset($opts['headers'])) ? $opts['headers'] : [];
+        $this->schema = isset($opts) && isset($opts['schema']) && $opts['schema'];
+        $this->fetch = isset($opts) && isset($opts['fetch']) && $opts['fetch'];
         $this->query = new PostgrestQuery($url, $reference_id, $api_key, $opts = []);
     }
 

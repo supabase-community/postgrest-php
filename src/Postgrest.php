@@ -16,16 +16,21 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-    public function __construct($reference_id, $api_key, $opts)
+    public function __construct($api_key, $reference_id, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1')
     {
         $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
-        $this->url = isset($opts['url']) ? $opts['url'] : "https://{$reference_id}.supabase.co/rest/v1";
+        $this->url = isset($opts['url']) ? $opts['url'] : "{$scheme}{$reference_id}{$domain}{$path}";
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
         $this->signal = isset($opts['signal']) && $opts['signal'];
         $this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
+        $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
         $this->body = isset($opts['body']) ? $opts['body'] : [];
+        $this->reference_id = $reference_id;
+        $this->api_key = $api_key;
+        $this->domain = $domain;
+        $this->path = $path;
     }
 
     public function execute()
@@ -47,8 +52,8 @@ class Postgrest
 
         try {
             //print_r($this->headers);
-            print_r($this->url->__toString());
-            $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
+            print_r($this->url);
+            $response = Request::request($this->method, $this->url, $this->headers, json_encode($this->body));
             $error = null;
 
             $status = $response->getStatusCode();
