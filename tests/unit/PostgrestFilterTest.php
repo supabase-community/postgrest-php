@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 require 'vendor/autoload.php';
-use Spatie\Url\Url;
 use PHPUnit\Framework\TestCase;
 
 use function PHPUnit\Framework\assertEquals;

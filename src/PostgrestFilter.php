@@ -1,14 +1,12 @@
 <?php
 
 $FilterOperators = ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in', 'cs', 'cd', 'sl', 'sr', 'nxr', 'nxl', 'adj', 'ov', 'fts', 'plfts', 'phfts', 'wfts'];
-use Spatie\Url\Url;
 class PostgrestFilter extends PostgrestTransform
 {
     public function eq($column, $value)
     {
-        
         $this->url = $this->url->withQueryParameters([$column => 'eq.'.$value]);
-        
+
         return $this;
     }
 
@@ -50,7 +48,7 @@ class PostgrestFilter extends PostgrestTransform
     public function like($column, $value)
     {
         $this->url = $this->url->withQueryParameters([$column => 'like.'.$value]);
-        
+
         return $this;
     }
 
@@ -154,6 +152,7 @@ class PostgrestFilter extends PostgrestTransform
 
         return $this;
     }
+
     public function textSearch($column, $opts)
     {
         $typePart = '';
@@ -168,7 +167,6 @@ class PostgrestFilter extends PostgrestTransform
         $configPart = $opts->config ? '('.$opts->config.')' : '';
         $this->url = $this->url->withQueryParameters([$column => $typePart.'fts'.$configPart.'.'.$query]);
 
-
         return $this;
     }
 
@@ -176,7 +174,6 @@ class PostgrestFilter extends PostgrestTransform
     {
         foreach ($query as $column => $value) {
             $this->url = $this->url->withQueryParameters([$column => 'eq.'.$value]);
-
         }
 
         return $this;
