@@ -37,7 +37,7 @@
     },
     "require": {
         "allure-framework/allure-phpunit": "^2",
-        "spatie/url": "^2.1",
+        "spatie/url": "^2.2",
         "guzzlehttp/guzzle": "^7.5",
         "vlucas/phpdotenv": "^5.5"
     }

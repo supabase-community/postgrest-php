@@ -16,7 +16,7 @@ class PostgrestTransform extends Postgrest
             return $c;
         }, str_split($columns)));
 
-        $this->url.'select'.$cleanedColumns;
+        $this->url->withQueryParameters(['select' => $cleanedColumns]);
         if (isset($this->headers) && $this->headers['Prefer']) {
             $this->headers['Prefer'] .= ',';
         }

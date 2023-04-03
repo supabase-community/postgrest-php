@@ -2,6 +2,8 @@
 
 use Supabase\Util\PostgrestError;
 use Supabase\Util\Request;
+use Spatie\Url\Url;
+
 
 class Postgrest
 {
@@ -16,10 +18,10 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-    public function __construct($api_key, $reference_id, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1')
+    public function __construct($api_key, $reference_id, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
         $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
-        $this->url = isset($opts['url']) ? $opts['url'] : "{$scheme}{$reference_id}{$domain}{$path}";
+        $this->url = Url::fromString($scheme.$reference_id.$domain.$path);
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
@@ -52,10 +54,8 @@ class Postgrest
 
         try {
             //print_r($this->headers);
-            print_r($this->url);
-            $response = Request::request($this->method, $this->url, $this->headers, json_encode($this->body));
-            $error = null;
-
+            print_r($this->url->__toString());
+            $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
             $status = $response->getStatusCode();
             $statusText = $response->getReasonPhrase();
             //$body = json_decode($response->getBody(), true);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f20982f7617597f9ba6f1527e393e739",
+    "content-hash": "1c50a490e8ee14c57b45e84f4c79177d",
     "packages": [
         {
             "name": "allure-framework/allure-php-commons",
