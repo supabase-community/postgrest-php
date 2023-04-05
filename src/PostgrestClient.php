@@ -14,7 +14,7 @@ class PostgrestClient
     private $fetch;
     private $domain;
 
-    public function __construct($reference_id, $api_key,  $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+    public function __construct($reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
         $this->url = Url::fromString($scheme.$reference_id.$domain);
         $headers = ['Authorization' => "Bearer {$api_key}", 'apikey'=>$api_key];
@@ -35,7 +35,7 @@ class PostgrestClient
             'headers' => $this->headers,
             'schema'  => $this->schema,
             'fetch'   => $this->fetch,
-            'url'     => $url
+            'url'     => $url,
         ]);
     }
 
@@ -56,7 +56,7 @@ class PostgrestClient
         if (isset($opts['count']) && $opts['count']) {
             $this->headers['Prefer'] = 'count='.$opts['count'];
         }
-        
+
         return new PostgrestFilter($url, $this->reference_id, [
             'url'        => $url,
             'headers'    => $this->headers,

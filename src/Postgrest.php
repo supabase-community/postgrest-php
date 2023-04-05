@@ -17,7 +17,7 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-    public function __construct($reference_id, $api_key,  $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+    public function __construct($reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
         $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
         $this->url = Url::fromString($scheme.$reference_id.$domain.$path);

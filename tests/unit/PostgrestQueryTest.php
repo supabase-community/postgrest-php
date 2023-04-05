@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 require 'vendor/autoload.php';
-use Spatie\Url\Url;
-use Supabase\Util\PostgrestError;
-use Supabase\Util\Request;
 
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +22,7 @@ final class PostgrestQueryTest extends TestCase
         $dotenv->load();
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
-        $this->query = new PostgrestQuery( $reference_id, $api_key, $opts = []);
+        $this->query = new PostgrestQuery($reference_id, $api_key, $opts = []);
     }
 
     public function testSelect()
@@ -38,36 +35,36 @@ final class PostgrestQueryTest extends TestCase
     public function testInsert()
     {
         $result = $this->query->insert('countries');
-        print_r((string)$result->url);
+        print_r((string) $result->url);
         print_r($result);
         ob_flush();
-        assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string)$result->url);
+        assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string) $result->url);
     }
 
     public function testUpsert()
     {
         $result = $this->query->upsert('countries');
-        print_r((string)$result->url);
+        print_r((string) $result->url);
         print_r($result);
         ob_flush();
-        assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string)$result->url);
+        assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string) $result->url);
     }
 
     public function testUpdate()
     {
         $result = $this->query->update('countries');
-        print_r((string)$result->url);
+        print_r((string) $result->url);
         print_r($result);
         ob_flush();
-        assertEquals('gpdefvsxamnscceccczu', (string)$result->url);
+        assertEquals('gpdefvsxamnscceccczu', (string) $result->url);
     }
 
     public function testDelete()
     {
         $result = $this->query->delete('countries');
-        print_r((string)$result->url);
+        print_r((string) $result->url);
         print_r($result);
         ob_flush();
-        assertEquals('gpdefvsxamnscceccczu', (string)$result->url);
+        assertEquals('gpdefvsxamnscceccczu', (string) $result->url);
     }
 }

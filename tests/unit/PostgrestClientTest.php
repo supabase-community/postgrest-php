@@ -24,12 +24,12 @@ final class PostgrestClientTest extends TestCase
     public function testFrom(): void
     {
         $result = $this->client->from('users');
-        assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/users', (string)$result->url);
+        assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/users', (string) $result->url);
     }
 
     public function testCanRPC(): void
     {
         $result = $this->client->rpc('add_one_each', ['arr'=> [1, 2, 3]], ['opts'=>'head']);
-        $this->assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/rpc/add_one', (string)$result->url);
+        $this->assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/rpc/add_one', (string) $result->url);
     }
 }

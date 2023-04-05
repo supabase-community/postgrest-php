@@ -1,8 +1,6 @@
 <?php
 
 use Spatie\Url\Url;
-use Supabase\Util\PostgrestError;
-use Supabase\Util\Request;
 
 class PostgrestQuery
 {
@@ -46,11 +44,12 @@ class PostgrestQuery
         }, str_split($columns)));
 
         $this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
-        print_r((string)$this->url);
+        print_r((string) $this->url);
         if (isset($opts['count'])) {
             $this->headers['Prefer'] = 'count='.$opts['count'];
         }
-        print_r((string)$this->url);
+        print_r((string) $this->url);
+
         return new PostgrestFilter($this->reference_id, $this->api_key, [
             'url'        => $this->url,
             'headers'    => $this->headers,
