@@ -192,8 +192,6 @@ class PostgrestFilter extends PostgrestTransform
         $this->url = $this->url->withQueryParameters([$key, '('.$filters.')']);
 
         return $this;
-
-        //finish methods
     }
 
     public function filter($column, $operator, $value)

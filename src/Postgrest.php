@@ -17,7 +17,7 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-    public function __construct($api_key, $reference_id, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+    public function __construct($reference_id, $api_key,  $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
         $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
         $this->url = Url::fromString($scheme.$reference_id.$domain.$path);
@@ -52,14 +52,11 @@ class Postgrest
         $count = null;
 
         try {
-            //print_r($this->headers);
             print_r($this->url->__toString());
             $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
             $status = $response->getStatusCode();
             $statusText = $response->getReasonPhrase();
-            //$body = json_decode($response->getBody(), true);
 
-            //print_r($body);
             if ($this->method != 'HEAD') {
                 $body = $response->getBody();
                 if ($body === '') {

@@ -1,5 +1,9 @@
 <?php
 
+use Spatie\Url\Url;
+use Supabase\Util\PostgrestError;
+use Supabase\Util\Request;
+
 class PostgrestQuery
 {
     private $reference_id;
@@ -9,14 +13,20 @@ class PostgrestQuery
     private $schema;
     private $fetch;
 
-    public function __construct($url, $reference_id, $api_key, $opts = [])
+    public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
-        $this->url = $url;
-        $this->headers = (isset($opts) && isset($opts['headers'])) ? $opts['headers'] : [];
-        $this->schema = isset($opts) && isset($opts['schema']) && $opts['schema'];
-        $this->fetch = isset($opts) && isset($opts['fetch']) && $opts['fetch'];
+        $this->url = Url::fromString($scheme.$reference_id.$domain.$path);
+        $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
+        $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
+        $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
+        $this->signal = isset($opts['signal']) && $opts['signal'];
+        $this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
+        $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
+        $this->body = isset($opts['body']) ? $opts['body'] : [];
         $this->reference_id = $reference_id;
         $this->api_key = $api_key;
+        $this->domain = $domain;
+        $this->path = $path;
     }
 
     public function select($columns = '*', $opts = [])
@@ -36,11 +46,11 @@ class PostgrestQuery
         }, str_split($columns)));
 
         $this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
-
+        print_r((string)$this->url);
         if (isset($opts['count'])) {
             $this->headers['Prefer'] = 'count='.$opts['count'];
         }
-
+        print_r((string)$this->url);
         return new PostgrestFilter($this->reference_id, $this->api_key, [
             'url'        => $this->url,
             'headers'    => $this->headers,
@@ -101,7 +111,6 @@ class PostgrestQuery
         $ignoreDuplicates = isset($opts['ignoreDuplicates']) && isset($opts['ignoreDuplicates']) ? true : false; // or false depending on your requirements
         $prefersHeaders = ['resolution='.($ignoreDuplicates ? 'ignore' : 'merge').'-duplicates'];
 
-        //$prefersHeaders = ['resolution=' . (isset($opts['ignoreDuplicates']) && $opts['ignoreDuplicates'] ? 'ignore' : 'merge') . '-duplicates'];
         if (isset($opts['onConflict'])) {
             $this->url = $this->url->withQueryParameters(['on_conflict'=>$opts['onConflict']]);
         }
