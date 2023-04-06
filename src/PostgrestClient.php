@@ -35,8 +35,7 @@ class PostgrestClient
             'headers' => $this->headers,
             'schema'  => $this->schema,
             'fetch'   => $this->fetch,
-            'url'     => $url,
-        ]);
+        ], $url->getHost() , $url->getScheme(), $url->getPath());
     }
 
     public function rpc($fn, $args = [], $opts = [])

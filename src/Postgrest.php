@@ -17,10 +17,10 @@ class Postgrest
     private $reference_id;
     private $api_key;
 
-    public function __construct($reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+    public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
         $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
-        $this->url = Url::fromString($scheme.$reference_id.$domain.$path);
+        $this->url = $url;
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];

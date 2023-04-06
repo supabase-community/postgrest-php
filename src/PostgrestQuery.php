@@ -13,7 +13,7 @@ class PostgrestQuery
 
     public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
     {
-        $this->url = Url::fromString($scheme.$reference_id.$domain.$path);
+        $this->url = $url;
         $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
         $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
         $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
@@ -31,7 +31,6 @@ class PostgrestQuery
     {
         $method = isset($opts['head']) ? 'HEAD' : 'GET';
         $quoted = false;
-
         $cleanedColumns = join('', array_map(function ($c) {
             if (preg_match('/\s/', $c)) {
                 return '';
@@ -43,21 +42,19 @@ class PostgrestQuery
             return $c;
         }, str_split($columns)));
 
-        $this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
-        print_r((string) $this->url);
+        $url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
         if (isset($opts['count'])) {
             $this->headers['Prefer'] = 'count='.$opts['count'];
         }
-        print_r((string) $this->url);
 
-        return new PostgrestFilter($this->reference_id, $this->api_key, [
-            'url'        => $this->url,
+
+        return new PostgrestFilter($url, $this->reference_id, $this->api_key, [
             'headers'    => $this->headers,
             'schema'     => $this->schema,
             'fetch'      => $this->fetch,
             'method'     => $method,
             'allowEmpty' => false,
-        ]);
+        ], $this->url->getHost() , $this->url->getScheme(), $this->url->getPath());
     }
 
     public function insert($values, $opts = [])

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
+use Spatie\Url\Url;
 
 use function PHPUnit\Framework\assertEquals;
 
@@ -20,12 +21,16 @@ final class PostgrestFilterTest extends TestCase
         $dotenv->load();
         $api_key = getenv('API_KEY');
         $reference_id = getenv('REFERENCE_ID');
-        $this->filter = new PostgrestFilter($api_key, $reference_id);
+        $url = Url::fromString('https://'.$reference_id.'.supabase.co'.'/rest/v1/');
+        $this->filter = new PostgrestFilter($url, $reference_id, $api_key);
     }
+    //should look like this https://gpdefvsxamnscceccczu.supabase.co/rest/v1/countries?name=eq.Algeria&select=*
 
     public function testEq(): void
     {
         $result = $this->filter->eq('name', 'Algeria');
+        print_r((string)$result->url);
+        ob_flush();
         assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/?name=eq.Algeria', (string) $result->url);
     }
 
