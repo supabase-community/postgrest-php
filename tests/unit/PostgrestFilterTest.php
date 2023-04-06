@@ -29,7 +29,7 @@ final class PostgrestFilterTest extends TestCase
     public function testEq(): void
     {
         $result = $this->filter->eq('name', 'Algeria');
-        print_r((string)$result->url);
+        print_r((string) $result->url);
         ob_flush();
         assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/?name=eq.Algeria', (string) $result->url);
     }

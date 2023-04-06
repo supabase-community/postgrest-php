@@ -1,7 +1,5 @@
 <?php
 
-use Spatie\Url\Url;
-
 class PostgrestQuery
 {
     private $reference_id;
@@ -47,14 +45,13 @@ class PostgrestQuery
             $this->headers['Prefer'] = 'count='.$opts['count'];
         }
 
-
         return new PostgrestFilter($url, $this->reference_id, $this->api_key, [
             'headers'    => $this->headers,
             'schema'     => $this->schema,
             'fetch'      => $this->fetch,
             'method'     => $method,
             'allowEmpty' => false,
-        ], $this->url->getHost() , $this->url->getScheme(), $this->url->getPath());
+        ], $this->url->getHost(), $this->url->getScheme(), $this->url->getPath());
     }
 
     public function insert($values, $opts = [])

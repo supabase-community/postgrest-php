@@ -1,6 +1,5 @@
 <?php
 
-use Spatie\Url\Url;
 use Supabase\Util\PostgrestError;
 use Supabase\Util\Request;
 
