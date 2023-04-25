@@ -12,7 +12,6 @@ final class PostgrestQueryTest extends TestCase
 
 	public function setup(): void
 	{
-
 		parent::setUp();
 		$url = Url::fromString('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/');
 		$this->query = new PostgrestQuery($url);
