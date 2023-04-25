@@ -1,8 +1,8 @@
 <?php
 namespace Supabase\Postgrest;
 
-use Supabase\Util\PostgrestError;
-use Supabase\Util\Request;
+use Supabase\Postgrest\Util\PostgrestError;
+use Supabase\Postgrest\Util\Request;
 
 class Postgrest
 {

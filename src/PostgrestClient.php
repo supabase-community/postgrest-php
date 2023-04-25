@@ -3,7 +3,7 @@
 namespace Supabase\Postgrest;
 
 use Spatie\Url\Url;
-use Supabase\Util\Constants;
+use Supabase\Postgrest\Util\Constants;
 
 class PostgrestClient
 {

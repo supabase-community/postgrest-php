@@ -1,6 +1,6 @@
 <?php
 
-namespace Supabase\Util;
+namespace Supabase\Postgrest\Util;
 
 use Psr\Http\Message\ResponseInterface;
 

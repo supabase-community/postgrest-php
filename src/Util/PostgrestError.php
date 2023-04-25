@@ -1,6 +1,6 @@
 <?php
 
-namespace Supabase\Util;
+namespace Supabase\Postgrest\Util;
 
 class PostgrestError extends \Exception
 {
