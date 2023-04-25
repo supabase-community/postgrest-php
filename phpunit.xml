@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" cacheResult ="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+bootstrap="./vendor/autoload.php"
+xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" 
+cacheResult ="false" processUncoveredFilesFromWhitelist="false">
   <testsuites>
     <testsuite name="test-unit">
       <directory>./tests/unit</directory>
@@ -8,6 +11,11 @@
       <directory>./tests/integration</directory>
     </testsuite>
   </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
   <php>
     <env name="REFERENCE_ID" value=""/>
     <env name="API_KEY" value=""/>
