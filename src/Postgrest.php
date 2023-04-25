@@ -10,13 +10,12 @@ class Postgrest
 	public $headers;
 	private $body;
 	private $schema;
+	private $fetch;
 	private $shouldThrowOnError;
 	private $signal;
 	public $allowEmpty;
-	private $reference_id;
-	private $api_key;
 
-	public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+	public function __construct($url, $opts = [])
 	{
 		$this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
 		$this->url = $url;
@@ -27,10 +26,6 @@ class Postgrest
 		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
 		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
 		$this->body = isset($opts['body']) ? $opts['body'] : [];
-		$this->reference_id = $reference_id;
-		$this->api_key = $api_key;
-		$this->domain = $domain;
-		$this->path = $path;
 	}
 
 	public function execute()
@@ -142,7 +137,13 @@ class Postgrest
 
 class PostgrestResponse
 {
-	public function __construct($data = '', $error, $count = 0, $status = 0, $statusText = '')
+	public mixed $data;
+	public mixed $error;
+	public int$count;
+	public int $status;
+	public string $statusText;
+	
+	public function __construct($data = '', $error = null, $count = 0, $status = 0, $statusText = '')
 	{
 		$this->data = $data;
 		$this->error = $error;

@@ -1,13 +1,7 @@
 <?php
 
 declare(strict_types=1);
-require 'vendor/autoload.php';
-
 use PHPUnit\Framework\TestCase;
-
-use function PHPUnit\Framework\assertEquals;
-
-require __DIR__.'/../../src/PostgrestFilter.php';
 
 final class PostgrestQueryTest extends TestCase
 {

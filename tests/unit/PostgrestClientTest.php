@@ -1,10 +1,6 @@
 <?php
-
 declare(strict_types=1);
-require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-
-use function PHPUnit\Framework\assertSame;
 
 final class PostgrestClientTest extends TestCase
 {

@@ -7,15 +7,12 @@
     "autoload": {
         "psr-0": { "": "src/" },
         "psr-4": {
-            "Supabase\\PostgrestPhp\\": "src/"
-        },
-        "classmap": [
-            "src/"
-        ]
+            "Supabase\\Postgrest\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Supabase\\Test\\": "tests/"
+            "Supabase\\Postgrest\\Test\\": "tests/"
         }
     },
     "authors": [
@@ -38,6 +35,7 @@
     },
     "require": {
         "guzzlehttp/guzzle": "7.5",
-        "vlucas/phpdotenv": "5.5"
+        "vlucas/phpdotenv": "5.5",
+        "spatie/url": "2.2"
     }
 }

@@ -19,6 +19,7 @@ class PostgrestClient
 		$this->url = Url::fromString($scheme.$reference_id.$domain);
 		$headers = ['Authorization' => "Bearer {$api_key}", 'apikey'=>$api_key];
 		$this->headers = array_merge(Constants::getDefaultHeaders(), $headers);
+
 		$this->schema = (isset($opts) && isset($opts['schema'])) && $opts['schema'];
 		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
 		$this->reference_id = $reference_id;
@@ -57,7 +58,6 @@ class PostgrestClient
 		}
 
 		return new PostgrestFilter($url, $this->reference_id, [
-			'url'        => $url,
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,
