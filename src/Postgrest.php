@@ -5,149 +5,149 @@ use Supabase\Util\Request;
 
 class Postgrest
 {
-    private $method;
-    public $url;
-    public $headers;
-    private $body;
-    private $schema;
-    private $shouldThrowOnError;
-    private $signal;
-    public $allowEmpty;
-    private $reference_id;
-    private $api_key;
+	private $method;
+	public $url;
+	public $headers;
+	private $body;
+	private $schema;
+	private $shouldThrowOnError;
+	private $signal;
+	public $allowEmpty;
+	private $reference_id;
+	private $api_key;
 
-    public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
-    {
-        $this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
-        $this->url = $url;
-        $this->headers = isset($opts['headers']) ? $opts['headers'] : [];
-        $this->schema = isset($opts['schema']) ? $opts['schema'] : '';
-        $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
-        $this->signal = isset($opts['signal']) && $opts['signal'];
-        $this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
-        $this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
-        $this->body = isset($opts['body']) ? $opts['body'] : [];
-        $this->reference_id = $reference_id;
-        $this->api_key = $api_key;
-        $this->domain = $domain;
-        $this->path = $path;
-    }
+	public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+	{
+		$this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
+		$this->url = $url;
+		$this->headers = isset($opts['headers']) ? $opts['headers'] : [];
+		$this->schema = isset($opts['schema']) ? $opts['schema'] : '';
+		$this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
+		$this->signal = isset($opts['signal']) && $opts['signal'];
+		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
+		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
+		$this->body = isset($opts['body']) ? $opts['body'] : [];
+		$this->reference_id = $reference_id;
+		$this->api_key = $api_key;
+		$this->domain = $domain;
+		$this->path = $path;
+	}
 
-    public function execute()
-    {
-        if ($this->schema) {
-            if ($this->method == 'GET' || $this->method == 'HEAD') {
-                $this->headers = array_merge($this->headers, ['Accept-Profile' => $this->schema]);
-            } else {
-                $this->headers = array_merge($this->headers, ['Content-Profile' => $this->schema]);
-                //$this->headers[] = 'Content-Profile: '.$this->schema;
-            }
-        }
+	public function execute()
+	{
+		if ($this->schema) {
+			if ($this->method == 'GET' || $this->method == 'HEAD') {
+				$this->headers = array_merge($this->headers, ['Accept-Profile' => $this->schema]);
+			} else {
+				$this->headers = array_merge($this->headers, ['Content-Profile' => $this->schema]);
+				//$this->headers[] = 'Content-Profile: '.$this->schema;
+			}
+		}
 
-        if ($this->method != 'GET' || $this->method != 'HEAD') {
-            $this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
-        }
-        $data = null;
-        $count = null;
+		if ($this->method != 'GET' || $this->method != 'HEAD') {
+			$this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
+		}
+		$data = null;
+		$count = null;
 
-        try {
-            print_r($this->url->__toString());
-            $response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
-            $status = $response->getStatusCode();
-            $statusText = $response->getReasonPhrase();
+		try {
+			print_r($this->url->__toString());
+			$response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
+			$status = $response->getStatusCode();
+			$statusText = $response->getReasonPhrase();
 
-            if ($this->method != 'HEAD') {
-                $body = $response->getBody();
-                if ($body === '') {
-                    // Prefer: return=minimal
-                } elseif ($this->headers['Accept'] === 'text/csv') {
-                    $data = $body->getContents();
-                } elseif (
-                    isset($this->headers['Accept']) &&
-                    strpos($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false
-                ) {
-                    $data = $body->getContents();
-                } else {
-                    $data = json_decode($body, true);
-                }
-            }
+			if ($this->method != 'HEAD') {
+				$body = $response->getBody();
+				if ($body === '') {
+					// Prefer: return=minimal
+				} elseif ($this->headers['Accept'] === 'text/csv') {
+					$data = $body->getContents();
+				} elseif (
+					isset($this->headers['Accept']) &&
+					strpos($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false
+				) {
+					$data = $body->getContents();
+				} else {
+					$data = json_decode($body, true);
+				}
+			}
 
-            $countHeader = isset($this->headers['Prefer']) ? preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], $matches) : null;
-            $contentRange = $response->getHeader('content-range')[0];
-            if ($countHeader && $contentRange) {
-                $ranges = explode('/', $contentRange);
-                print_r($ranges);
-                if (count($ranges) > 1) {
-                    $count = $ranges[1];
-                }
-            }
+			$countHeader = isset($this->headers['Prefer']) ? preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], $matches) : null;
+			$contentRange = $response->getHeader('content-range')[0];
+			if ($countHeader && $contentRange) {
+				$ranges = explode('/', $contentRange);
+				print_r($ranges);
+				if (count($ranges) > 1) {
+					$count = $ranges[1];
+				}
+			}
 
-            $postgrestResponse = new PostgrestResponse($data, $error, $count, $status, $statusText);
+			$postgrestResponse = new PostgrestResponse($data, $error, $count, $status, $statusText);
 
-            return $postgrestResponse;
+			return $postgrestResponse;
 
-            return $response;
-        } catch (\Exception $e) {
-            if (PostgrestError::isPostgrestError($e)) {
-                if ($e->response) {
-                    $body = $e->response->getBody();
-                    $error = json_decode($body, true);
+			return $response;
+		} catch (\Exception $e) {
+			if (PostgrestError::isPostgrestError($e)) {
+				if ($e->response) {
+					$body = $e->response->getBody();
+					$error = json_decode($body, true);
 
-                    // Workaround for https://github.com/supabase/postgrest-js/issues/295
-                    if (is_array($error) && $e->response->getStatusCode() === 404) {
-                        $data = [];
-                        $error = null;
-                        $status = 200;
-                        $statusText = 'OK';
-                    }
-                } else {
-                    // Workaround for https://github.com/supabase/postgrest-js/issues/295
-                    if ($e->response->getStatusCode() === 404 && $body === '') {
-                        $status = 204;
-                        $statusText = 'No Content';
-                    } else {
-                        $error = [
-                            'message' => $body,
-                        ];
-                    }
-                }
-                //$error = $e->response->getStatusCode();
+					// Workaround for https://github.com/supabase/postgrest-js/issues/295
+					if (is_array($error) && $e->response->getStatusCode() === 404) {
+						$data = [];
+						$error = null;
+						$status = 200;
+						$statusText = 'OK';
+					}
+				} else {
+					// Workaround for https://github.com/supabase/postgrest-js/issues/295
+					if ($e->response->getStatusCode() === 404 && $body === '') {
+						$status = 204;
+						$statusText = 'No Content';
+					} else {
+						$error = [
+							'message' => $body,
+						];
+					}
+				}
+				//$error = $e->response->getStatusCode();
 
-                if ($error && $this->allowEmpty && strpos($error['details'], 'Results contain 0 rows') !== false) {
-                    $error = null;
-                    $status = 200;
-                    $statusText = 'OK';
-                }
+				if ($error && $this->allowEmpty && strpos($error['details'], 'Results contain 0 rows') !== false) {
+					$error = null;
+					$status = 200;
+					$statusText = 'OK';
+				}
 
-                if ($error && $this->shouldThrowOnError) {
-                    throw $e;
-                }
+				if ($error && $this->shouldThrowOnError) {
+					throw $e;
+				}
 
-                $postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
+				$postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
 
-                return $postgrestResponse;
+				return $postgrestResponse;
 
-                return new PostgrestResponse(null, [
-                    'message' => $e->getMessage(),
-                    'details' => isset($e->details) ? $e->details : '',
-                    'hint'    => isset($e->hint) ? $e->hint : '',
-                    'code'    => is_null($e) ? $e->getCode() : null,
-                ], null, is_null($e) ? $e->response->getStatusCode() : null);
-            }
+				return new PostgrestResponse(null, [
+					'message' => $e->getMessage(),
+					'details' => isset($e->details) ? $e->details : '',
+					'hint'    => isset($e->hint) ? $e->hint : '',
+					'code'    => is_null($e) ? $e->getCode() : null,
+				], null, is_null($e) ? $e->response->getStatusCode() : null);
+			}
 
-            throw $e;
-        }
-    }
+			throw $e;
+		}
+	}
 }
 
 class PostgrestResponse
 {
-    public function __construct($data = '', $error, $count = 0, $status = 0, $statusText = '')
-    {
-        $this->data = $data;
-        $this->error = $error;
-        $this->count = $count;
-        $this->status = $status;
-        $this->statusText = $statusText;
-    }
+	public function __construct($data = '', $error, $count = 0, $status = 0, $statusText = '')
+	{
+		$this->data = $data;
+		$this->error = $error;
+		$this->count = $count;
+		$this->status = $status;
+		$this->statusText = $statusText;
+	}
 }
