@@ -1,15 +1,18 @@
 <?php
+namespace Supabase\Postgrest;
 
 class PostgrestQuery
 {
-	private $reference_id;
-	private $api_key;
 	public $url;
 	private $headers;
 	private $schema;
 	private $fetch;
+	private $shouldThrowOnError;
+	private $signal;
+	private $body;
+	private $allowEmpty;
 
-	public function __construct($url, $reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+	public function __construct($url, $opts = [])
 	{
 		$this->url = $url;
 		$this->headers = isset($opts['headers']) ? $opts['headers'] : [];
@@ -19,10 +22,6 @@ class PostgrestQuery
 		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
 		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
 		$this->body = isset($opts['body']) ? $opts['body'] : [];
-		$this->reference_id = $reference_id;
-		$this->api_key = $api_key;
-		$this->domain = $domain;
-		$this->path = $path;
 	}
 
 	public function select($columns = '*', $opts = [])
@@ -45,13 +44,13 @@ class PostgrestQuery
 			$this->headers['Prefer'] = 'count='.$opts['count'];
 		}
 
-		return new PostgrestFilter($url, $this->reference_id, $this->api_key, [
+		return new PostgrestFilter($url, [
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,
 			'method'     => $method,
 			'allowEmpty' => false,
-		], $this->url->getHost(), $this->url->getScheme(), $this->url->getPath());
+		]);
 	}
 
 	public function insert($values, $opts = [])
@@ -87,8 +86,7 @@ class PostgrestQuery
 			}
 		}
 
-		return new PostgrestFilter($this->reference_id, $this->api_key, [
-			'url'        => $this->url,
+		return new PostgrestFilter($this->url, [
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,
@@ -119,15 +117,14 @@ class PostgrestQuery
 		}
 		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-		return new PostgrestFilter($this->reference_id, $this->api_key, [
-			'url'        => $this->url,
+		return new PostgrestFilter($this->url, [
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,
 			'method'     => $method,
 			'body'       => $body,
 			'allowEmpty' => false,
-		], $this->headers);
+		]);
 	}
 
 	public function update($values, $opts = [])
@@ -146,8 +143,7 @@ class PostgrestQuery
 
 		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-		return new PostgrestFilter($this->reference_id, $this->api_key, [
-			'url'        => $this->url,
+		return new PostgrestFilter($this->url, [
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,
@@ -172,8 +168,7 @@ class PostgrestQuery
 
 		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-		return new PostgrestFilter($this->reference_id, $this->api_key, [
-			'url'        => $this->url,
+		return new PostgrestFilter($this->url, [
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,

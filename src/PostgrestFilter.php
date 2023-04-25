@@ -1,4 +1,5 @@
 <?php
+namespace Supabase\Postgrest;
 
 $FilterOperators = ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in', 'cs', 'cd', 'sl', 'sr', 'nxr', 'nxl', 'adj', 'ov', 'fts', 'plfts', 'phfts', 'wfts'];
 class PostgrestFilter extends PostgrestTransform

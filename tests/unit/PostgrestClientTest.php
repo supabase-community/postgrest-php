@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
+use Supabase\Postgrest\PostgrestClient;
 
 final class PostgrestClientTest extends TestCase
 {
@@ -9,18 +10,13 @@ final class PostgrestClientTest extends TestCase
 	public function setup(): void
 	{
 		parent::setUp();
-		\Dotenv\Dotenv::createImmutable(__DIR__);
-		$dotenv = \Dotenv\Dotenv::createUnsafeImmutable(__DIR__, '/../../.env.test');
-		$dotenv->load();
-		$api_key = getenv('API_KEY');
-		$reference_id = getenv('REFERENCE_ID');
-		$this->client = new PostgrestClient($api_key, $reference_id);
+		$this->client = new PostgrestClient('API_KEY', 'gpdefvsxamnscceccczu');
 	}
 
 	public function testFrom(): void
 	{
 		$result = $this->client->from('users');
-		assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/users', (string) $result->url);
+		$this->assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/users', (string) $result->url);
 	}
 
 	public function testCanRPC(): void

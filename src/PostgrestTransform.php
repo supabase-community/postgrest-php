@@ -1,4 +1,5 @@
 <?php
+namespace Supabase\Postgrest;
 
 class PostgrestTransform extends Postgrest
 {
@@ -17,17 +18,15 @@ class PostgrestTransform extends Postgrest
 		}, str_split($columns)));
 
 		$this->url->withQueryParameters(['select' => $cleanedColumns]);
-		if (isset($this->headers) && $this->headers['Prefer']) {
+		if (array_key_exists('Prefer', $this->headers)) {
 			$this->headers['Prefer'] .= ',';
 		}
 
-		if (! isset($this->headers)) {
-			$this->headers = ['Prefer' => ''];
+		if (!array_key_exists('Prefer', $this->headers)) {
+			$this->headers['Prefer'] = '';
 		}
 
 		$this->headers['Prefer'] = $this->headers['Prefer'].'return=representation';
-
-		//print_r( $this->headers['Prefer'] );
 
 		return $this;
 	}
@@ -135,12 +134,5 @@ class PostgrestTransform extends Postgrest
 	public function returns()
 	{
 		return $this;
-	}
-}
-
-function cleanQueryArr($q)
-{
-	if (preg_match('/\s/', $q)) {
-		$quotes = true;
 	}
 }

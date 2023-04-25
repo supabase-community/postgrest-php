@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
+use Spatie\Url\Url;
+use Supabase\Postgrest\PostgrestQuery;
 
 final class PostgrestQueryTest extends TestCase
 {
@@ -10,20 +12,16 @@ final class PostgrestQueryTest extends TestCase
 
 	public function setup(): void
 	{
+
 		parent::setUp();
-		\Dotenv\Dotenv::createImmutable(__DIR__);
-		$dotenv = \Dotenv\Dotenv::createUnsafeImmutable(__DIR__, '/../../.env.test');
-		$dotenv->load();
-		$api_key = getenv('API_KEY');
-		$reference_id = getenv('REFERENCE_ID');
-		$this->query = new PostgrestQuery($reference_id, $api_key, $opts = []);
+		$url = Url::fromString('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/');
+		$this->query = new PostgrestQuery($url);
 	}
 
 	public function testSelect()
 	{
 		$result = $this->query->select();
-		print_r($result);
-		ob_flush();
+		$this->assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/?select=%2A', (string) $result->url);
 	}
 
 	public function testInsert()
@@ -32,7 +30,7 @@ final class PostgrestQueryTest extends TestCase
 		print_r((string) $result->url);
 		print_r($result);
 		ob_flush();
-		assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string) $result->url);
+		$this->assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string) $result->url);
 	}
 
 	public function testUpsert()
@@ -41,7 +39,7 @@ final class PostgrestQueryTest extends TestCase
 		print_r((string) $result->url);
 		print_r($result);
 		ob_flush();
-		assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string) $result->url);
+		$this->assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/', (string) $result->url);
 	}
 
 	public function testUpdate()
@@ -50,7 +48,7 @@ final class PostgrestQueryTest extends TestCase
 		print_r((string) $result->url);
 		print_r($result);
 		ob_flush();
-		assertEquals('gpdefvsxamnscceccczu', (string) $result->url);
+		$this->assertEquals('gpdefvsxamnscceccczu', (string) $result->url);
 	}
 
 	public function testDelete()
@@ -59,6 +57,6 @@ final class PostgrestQueryTest extends TestCase
 		print_r((string) $result->url);
 		print_r($result);
 		ob_flush();
-		assertEquals('gpdefvsxamnscceccczu', (string) $result->url);
+		$this->assertEquals('gpdefvsxamnscceccczu', (string) $result->url);
 	}
 }

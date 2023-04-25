@@ -3,6 +3,7 @@
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Spatie\Url\Url;
+use Supabase\Postgrest\PostgrestFilter;
 
 final class PostgrestFilterTest extends TestCase
 {
