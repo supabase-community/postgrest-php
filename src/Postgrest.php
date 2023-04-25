@@ -142,7 +142,7 @@ class PostgrestResponse
 	public int$count;
 	public int $status;
 	public string $statusText;
-	
+
 	public function __construct($data = '', $error = null, $count = 0, $status = 0, $statusText = '')
 	{
 		$this->data = $data;
