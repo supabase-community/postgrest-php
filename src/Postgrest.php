@@ -1,4 +1,5 @@
 <?php
+
 namespace Supabase\Postgrest;
 
 use Supabase\Util\PostgrestError;

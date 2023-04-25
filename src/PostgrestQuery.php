@@ -1,4 +1,5 @@
 <?php
+
 namespace Supabase\Postgrest;
 
 class PostgrestQuery

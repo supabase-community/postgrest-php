@@ -1,4 +1,5 @@
 <?php
+
 namespace Supabase\Postgrest;
 
 class PostgrestTransform extends Postgrest
@@ -22,7 +23,7 @@ class PostgrestTransform extends Postgrest
 			$this->headers['Prefer'] .= ',';
 		}
 
-		if (!array_key_exists('Prefer', $this->headers)) {
+		if (! array_key_exists('Prefer', $this->headers)) {
 			$this->headers['Prefer'] = '';
 		}
 

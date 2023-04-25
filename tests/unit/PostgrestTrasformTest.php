@@ -20,7 +20,7 @@ final class PostgrestTransformTest extends TestCase
 	public function testSelect()
 	{
 		$result = $this->transform->select();
-// @TODO - this is truly failing - should include the select portion the url result
+		// @TODO - this is truly failing - should include the select portion the url result
 		$this->assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/?select=%2A', (string) $result->url);
 	}
 }
