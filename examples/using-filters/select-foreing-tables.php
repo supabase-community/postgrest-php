@@ -7,6 +7,6 @@ $response = $client->from('countries')->select(' name,
                                     cities!inner (
                                     name
                                     )')
-                                    ->eq('cities.name', 'Bali')
-                                    ->execute();
+									->eq('cities.name', 'Bali')
+									->execute();
 print_r($response);

@@ -1,19 +1,19 @@
 <?php
 
-namespace Supabase\Util;
+namespace Supabase\Postgrest\Util;
 
 class PostgrestError extends \Exception
 {
-    protected bool $isPostgrestError = true;
+	protected bool $isPostgrestError = true;
 
-    public function __construct($message)
-    {
-        parent::__construct($message);
-        $this->name = 'PostgrestError';
-    }
+	public function __construct($message)
+	{
+		parent::__construct($message);
+		$this->name = 'PostgrestError';
+	}
 
-    public static function isPostgrestError($e)
-    {
-        return $e != null && isset($e->isPostgrestError);
-    }
+	public static function isPostgrestError($e)
+	{
+		return $e != null && isset($e->isPostgrestError);
+	}
 }

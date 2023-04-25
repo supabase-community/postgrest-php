@@ -1,182 +1,180 @@
 <?php
 
+namespace Supabase\Postgrest;
+
 class PostgrestQuery
 {
-    private $reference_id;
-    private $api_key;
-    public $url;
-    private $headers;
-    private $schema;
-    private $fetch;
+	public $url;
+	private $headers;
+	private $schema;
+	private $fetch;
+	private $shouldThrowOnError;
+	private $signal;
+	private $body;
+	private $allowEmpty;
 
-    public function __construct($url, $reference_id, $api_key, $opts = [])
-    {
-        $this->url = $url;
-        $this->headers = (isset($opts) && isset($opts['headers'])) ? $opts['headers'] : [];
-        $this->schema = isset($opts) && isset($opts['schema']) && $opts['schema'];
-        $this->fetch = isset($opts) && isset($opts['fetch']) && $opts['fetch'];
-        $this->reference_id = $reference_id;
-        $this->api_key = $api_key;
-    }
+	public function __construct($url, $opts = [])
+	{
+		$this->url = $url;
+		$this->headers = isset($opts['headers']) ? $opts['headers'] : [];
+		$this->schema = isset($opts['schema']) ? $opts['schema'] : '';
+		$this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
+		$this->signal = isset($opts['signal']) && $opts['signal'];
+		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
+		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
+		$this->body = isset($opts['body']) ? $opts['body'] : [];
+	}
 
-    public function select($columns = '*', $opts = [])
-    {
-        $method = isset($opts['head']) ? 'HEAD' : 'GET';
-        $quoted = false;
+	public function select($columns = '*', $opts = [])
+	{
+		$method = isset($opts['head']) ? 'HEAD' : 'GET';
+		$quoted = false;
+		$cleanedColumns = join('', array_map(function ($c) {
+			if (preg_match('/\s/', $c)) {
+				return '';
+			}
+			if ($c === '"') {
+				$quoted = ! $quoted;
+			}
 
-        $cleanedColumns = join('', array_map(function ($c) {
-            if (preg_match('/\s/', $c)) {
-                return '';
-            }
-            if ($c === '"') {
-                $quoted = !$quoted;
-            }
+			return $c;
+		}, str_split($columns)));
 
-            return $c;
-        }, str_split($columns)));
+		$url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
+		if (isset($opts['count'])) {
+			$this->headers['Prefer'] = 'count='.$opts['count'];
+		}
 
-        $this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
+		return new PostgrestFilter($url, [
+			'headers'    => $this->headers,
+			'schema'     => $this->schema,
+			'fetch'      => $this->fetch,
+			'method'     => $method,
+			'allowEmpty' => false,
+		]);
+	}
 
-        if (isset($opts['count'])) {
-            $this->headers['Prefer'] = 'count='.$opts['count'];
-        }
+	public function insert($values, $opts = [])
+	{
+		$method = 'POST';
+		$body = $values;
+		$prefersHeaders = [];
 
-        return new PostgrestFilter($this->reference_id, $this->api_key, [
-            'url'        => $this->url,
-            'headers'    => $this->headers,
-            'schema'     => $this->schema,
-            'fetch'      => $this->fetch,
-            'method'     => $method,
-            'allowEmpty' => false,
-        ]);
-    }
+		if (isset($opts['count'])) {
+			array_push($prefersHeaders, 'count='.$opts['count']);
+		}
 
-    public function insert($values, $opts = [])
-    {
-        $method = 'POST';
-        $body = $values;
-        $prefersHeaders = [];
+		if (isset($this->headers['Prefer'])) {
+			array_unshift($prefersHeaders, $this->headers['Prefer']);
+		}
 
-        if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count='.$opts['count']);
-        }
+		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        if (isset($this->headers['Prefer'])) {
-            array_unshift($prefersHeaders, $this->headers['Prefer']);
-        }
+		if (is_array($values)) {
+			$columns = array_reduce($values, function ($acc, $x) {
+				if (is_array($x)) {
+					return array_merge($acc, array_keys($x));
+				}
+			}, []);
 
-        $this->headers['Prefer'] = join(',', $prefersHeaders);
+			if (empty($columns)) {
+				$columns = array_keys($values);
+			}
 
-        if (is_array($values)) {
-            $columns = array_reduce($values, function ($acc, $x) {
-                if (is_array($x)) {
-                    return array_merge($acc, array_keys($x));
-                }
-            }, []);
+			if (count($columns) > 0) {
+				$uniqueColumns = array_map(fn ($v) => strval($v), array_unique($columns));
+				$this->url = $this->url->withQueryParameters(['columns' => join(',', $uniqueColumns)]);
+			}
+		}
 
-            if (empty($columns)) {
-                $columns = array_keys($values);
-            }
+		return new PostgrestFilter($this->url, [
+			'headers'    => $this->headers,
+			'schema'     => $this->schema,
+			'fetch'      => $this->fetch,
+			'method'     => $method,
+			'body'       => $body,
+			'allowEmpty' => false,
+		]);
+	}
 
-            if (count($columns) > 0) {
-                $uniqueColumns = array_map(fn ($v) => strval($v), array_unique($columns));
-                $this->url = $this->url->withQueryParameters(['columns' => join(',', $uniqueColumns)]);
-            }
-        }
+	public function upsert($values, $opts = [])
+	{
+		$method = 'POST';
+		$ignoreDuplicates = isset($opts['ignoreDuplicates']) && isset($opts['ignoreDuplicates']) ? true : false; // or false depending on your requirements
+		$prefersHeaders = ['resolution='.($ignoreDuplicates ? 'ignore' : 'merge').'-duplicates'];
 
-        return new PostgrestFilter($this->reference_id, $this->api_key, [
-            'url'        => $this->url,
-            'headers'    => $this->headers,
-            'schema'     => $this->schema,
-            'fetch'      => $this->fetch,
-            'method'     => $method,
-            'body'       => $body,
-            'allowEmpty' => false,
-        ]);
-    }
+		if (isset($opts['onConflict'])) {
+			$this->url = $this->url->withQueryParameters(['on_conflict'=>$opts['onConflict']]);
+		}
 
-    public function upsert($values, $opts = [])
-    {
-        $method = 'POST';
-        $ignoreDuplicates = isset($opts['ignoreDuplicates']) && isset($opts['ignoreDuplicates']) ? true : false; // or false depending on your requirements
-        $prefersHeaders = ['resolution='.($ignoreDuplicates ? 'ignore' : 'merge').'-duplicates'];
+		$body = $values;
 
-        //$prefersHeaders = ['resolution=' . (isset($opts['ignoreDuplicates']) && $opts['ignoreDuplicates'] ? 'ignore' : 'merge') . '-duplicates'];
-        if (isset($opts['onConflict'])) {
-            $this->url = $this->url->withQueryParameters(['on_conflict'=>$opts['onConflict']]);
-        }
+		if (isset($opts['count'])) {
+			array_push($prefersHeaders, 'count='.$opts['count']);
+		}
 
-        $body = $values;
+		if (isset($this->headers['Prefer'])) {
+			array_unshift($prefersHeaders, $this->headers['Prefer']);
+		}
+		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count='.$opts['count']);
-        }
+		return new PostgrestFilter($this->url, [
+			'headers'    => $this->headers,
+			'schema'     => $this->schema,
+			'fetch'      => $this->fetch,
+			'method'     => $method,
+			'body'       => $body,
+			'allowEmpty' => false,
+		]);
+	}
 
-        if (isset($this->headers['Prefer'])) {
-            array_unshift($prefersHeaders, $this->headers['Prefer']);
-        }
-        $this->headers['Prefer'] = join(',', $prefersHeaders);
+	public function update($values, $opts = [])
+	{
+		$method = 'PATCH';
+		$body = $values;
+		$prefersHeaders = [];
 
-        return new PostgrestFilter($this->reference_id, $this->api_key, [
-            'url'        => $this->url,
-            'headers'    => $this->headers,
-            'schema'     => $this->schema,
-            'fetch'      => $this->fetch,
-            'method'     => $method,
-            'body'       => $body,
-            'allowEmpty' => false,
-        ], $this->headers);
-    }
+		if (isset($opts['count'])) {
+			array_push($prefersHeaders, 'count='.$opts['count']);
+		}
 
-    public function update($values, $opts = [])
-    {
-        $method = 'PATCH';
-        $body = $values;
-        $prefersHeaders = [];
+		if (isset($this->headers['Prefer'])) {
+			array_unshift($prefersHeaders, $this->headers['Prefer']);
+		}
 
-        if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count='.$opts['count']);
-        }
+		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        if (isset($this->headers['Prefer'])) {
-            array_unshift($prefersHeaders, $this->headers['Prefer']);
-        }
+		return new PostgrestFilter($this->url, [
+			'headers'    => $this->headers,
+			'schema'     => $this->schema,
+			'fetch'      => $this->fetch,
+			'method'     => $method,
+			'body'       => $body,
+			'allowEmpty' => false,
+		]);
+	}
 
-        $this->headers['Prefer'] = join(',', $prefersHeaders);
+	public function delete($opts = [])
+	{
+		$method = 'DELETE';
+		$prefersHeaders = [];
 
-        return new PostgrestFilter($this->reference_id, $this->api_key, [
-            'url'        => $this->url,
-            'headers'    => $this->headers,
-            'schema'     => $this->schema,
-            'fetch'      => $this->fetch,
-            'method'     => $method,
-            'body'       => $body,
-            'allowEmpty' => false,
-        ]);
-    }
+		if (isset($opts['count'])) {
+			array_push($prefersHeaders, 'count='.$opts['count']);
+		}
 
-    public function delete($opts = [])
-    {
-        $method = 'DELETE';
-        $prefersHeaders = [];
+		if (isset($this->headers['Prefer'])) {
+			array_unshift($prefersHeaders, $this->headers['Prefer']);
+		}
 
-        if (isset($opts['count'])) {
-            array_push($prefersHeaders, 'count='.$opts['count']);
-        }
+		$this->headers['Prefer'] = join(',', $prefersHeaders);
 
-        if (isset($this->headers['Prefer'])) {
-            array_unshift($prefersHeaders, $this->headers['Prefer']);
-        }
-
-        $this->headers['Prefer'] = join(',', $prefersHeaders);
-
-        return new PostgrestFilter($this->reference_id, $this->api_key, [
-            'url'        => $this->url,
-            'headers'    => $this->headers,
-            'schema'     => $this->schema,
-            'fetch'      => $this->fetch,
-            'method'     => $method,
-            'allowEmpty' => false,
-        ]);
-    }
+		return new PostgrestFilter($this->url, [
+			'headers'    => $this->headers,
+			'schema'     => $this->schema,
+			'fetch'      => $this->fetch,
+			'method'     => $method,
+			'allowEmpty' => false,
+		]);
+	}
 }

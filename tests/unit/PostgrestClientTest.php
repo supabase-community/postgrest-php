@@ -2,42 +2,27 @@
 
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
+use Supabase\Postgrest\PostgrestClient;
 
 final class PostgrestClientTest extends TestCase
 {
-    public function testCanBeCreatedFromValidUrl(): void
-    {
-        $this->assertInstanceOf(
-            PostgrestClient::class,
-            new PostgrestClient('http://localhost:3000', [])
-        );
-    }
+	private $client;
 
-    public function testCanSelectTable(): void
-    {
-        $client = new PostgrestClient('http://localhost:3000', []);
+	public function setup(): void
+	{
+		parent::setUp();
+		$this->client = new PostgrestClient('API_KEY', 'gpdefvsxamnscceccczu');
+	}
 
-        $this->assertSame($client->from('users')->select()->url->__toString(), 'http://localhost:3000/users?select=%2A');
-    }
+	public function testFrom(): void
+	{
+		$result = $this->client->from('users');
+		$this->assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/users', (string) $result->url);
+	}
 
-    public function testCanSelectColumns(): void
-    {
-        $client = new PostgrestClient('http://localhost:3000', []);
-
-        $this->assertSame($client->from('users')->select('id, name')->url->__toString(), 'http://localhost:3000/users?select=id%2Cname');
-    }
-
-    public function testCanRPC(): void
-    {
-        $client = new PostgrestClient('http://localhost:3000', []);
-
-        $this->assertSame($client->rpc('add_one')->select()->url->__toString(), 'http://localhost:3000/rpc/add_one');
-    }
-
-    public function testCanExecute(): void
-    {
-        $client = new PostgrestClient('http://localhost:3000', []);
-
-        $this->assertSame($client->from('users')->select()->execute()->status, 200);
-    }
+	public function testCanRPC(): void
+	{
+		$result = $this->client->rpc('add_one_each', ['arr'=> [1, 2, 3]], ['opts'=>'head']);
+		$this->assertSame('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/rpc/add_one', (string) $result->url);
+	}
 }

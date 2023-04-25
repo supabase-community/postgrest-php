@@ -7,6 +7,6 @@ $response = $client->from('countries')->select('name,
                                                 cities (
                                                 name
                                                 )')
-                                    ->limit(1, ['foreignTable'=> 'cities'])
-                                    ->execute();
+									->limit(1, ['foreignTable'=> 'cities'])
+									->execute();
 print_r($response);
