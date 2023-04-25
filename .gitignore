@@ -2,9 +2,8 @@
 /vendor
 .env
 .env.backup
-phpunit.xml
+.env.test
 .phpdoc
 /.phpunit.cache/
 .vscode
 composer.lock
-.env.test
