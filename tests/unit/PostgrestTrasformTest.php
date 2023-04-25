@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
@@ -12,8 +13,6 @@ final class PostgrestTransformTest extends TestCase
 	public function setup(): void
 	{
 		parent::setUp();
-
-		parent::setUp();
 		$url = Url::fromString('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/');
 		$this->transform = new PostgrestTransform($url);
 	}
@@ -24,5 +23,4 @@ final class PostgrestTransformTest extends TestCase
 // @TODO - this is truly failing - should include the select portion the url result
 		$this->assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/?select=%2A', (string) $result->url);
 	}
-
 }
