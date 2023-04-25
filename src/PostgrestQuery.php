@@ -2,8 +2,6 @@
 
 namespace Supabase\Postgrest;
 
-use Supabase\Postgrest\PostgrestFilter;
-
 class PostgrestQuery
 {
 	public $url;
