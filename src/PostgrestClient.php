@@ -33,6 +33,7 @@ class PostgrestClient
 	public function from($relation)
 	{
 		$url = $this->url->withPath($this->path.$relation);
+
 		return new PostgrestQuery($url, [
 			'headers' => $this->headers,
 			'schema'  => $this->schema,

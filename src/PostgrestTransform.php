@@ -2,20 +2,20 @@
 
 namespace Supabase\Postgrest;
 
-
 class PostgrestTransform extends Postgrest
 {
 	public function select($columns = '*')
 	{
 		$quoted = false;
 		$cleanedColumns = str_split($columns ?? '*');
-		$cleanedColumns = array_map(function($c) use (&$quoted) {
-			if (preg_match('/\s/', $c) && !$quoted) {
+		$cleanedColumns = array_map(function ($c) use (&$quoted) {
+			if (preg_match('/\s/', $c) && ! $quoted) {
 				return '';
 			}
 			if ($c === '"') {
-				$quoted = !$quoted;
+				$quoted = ! $quoted;
 			}
+
 			return $c;
 		}, $cleanedColumns);
 		$cleanedColumns = implode('', $cleanedColumns);
@@ -23,10 +23,11 @@ class PostgrestTransform extends Postgrest
 		if (isset($this->headers['Prefer'])) {
 			$this->headers['Prefer'] .= ',';
 		}
-		if (!isset($this->headers['Prefer'])) {
-            $this->headers = ['Prefer' => ''];
-        }
+		if (! isset($this->headers['Prefer'])) {
+			$this->headers = ['Prefer' => ''];
+		}
 		$this->headers['Prefer'] .= 'return=representation';
+
 		return $this;
 	}
 
@@ -36,6 +37,7 @@ class PostgrestTransform extends Postgrest
 
 		$existingOrder = $this->url->getQueryParameter($key);
 		$this->url = $this->url->withQueryParameters([$key => $existingOrder ? $existingOrder.',' : ''.$column.'.'.($opts['ascending'] ? 'asc' : 'desc').(isset($opts['nullsFirst']) && $opts['nullsFirst'] ? '.nullsfirst' : '.nullslast')]);
+
 		return $this;
 	}
 
