@@ -188,9 +188,10 @@ class PostgrestFilter extends PostgrestTransform
 		return $this;
 	}
 
-	public function or($filters, $opts)
+	public function or(string $filters, array $options = [])
 	{
-		$key = $opts->foreignTable ? $opts->foreignTable.'.or' : 'or';
+		$foreignTable = $options['foreignTable'] ?? null;
+		$key = $foreignTable ? $foreignTable . '.or' : 'or';
 		$this->url = $this->url->withQueryParameters([$key, '('.$filters.')']);
 
 		return $this;

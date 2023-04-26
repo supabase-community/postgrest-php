@@ -1,6 +1,7 @@
 <?php
 
 require '../header.php';
+use Supabase\Postgrest\PostgrestClient;
 $scheme = 'https://';
 $domain = '.supabase.co/';
 $path = 'rest/v1/';

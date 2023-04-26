@@ -53,7 +53,6 @@ final class PostgrestClientTest extends TestCase
 	public function testCanSelectTable(): void
 	{
 		$result = $this->client->from('users')->select();
-		print_r($result);
 		ob_flush();
 		assertSame($result, 'gpdefvsxamnscceccczu');
 	}
