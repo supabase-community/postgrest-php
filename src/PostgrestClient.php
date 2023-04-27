@@ -34,11 +34,11 @@ class PostgrestClient
 	{
 		$url = $this->url->withPath($this->path.$relation);
 
-		return new PostgrestQuery($url, $this->reference_id, $this->api_key, [
+		return new PostgrestQuery($url, [
 			'headers' => $this->headers,
 			'schema'  => $this->schema,
 			'fetch'   => $this->fetch,
-		], $url->getHost(), $url->getScheme(), $url->getPath());
+		]);
 	}
 
 	public function rpc($fn, $args = [], $opts = [])
@@ -59,7 +59,7 @@ class PostgrestClient
 			$this->headers['Prefer'] = 'count='.$opts['count'];
 		}
 
-		return new PostgrestFilter($url, $this->reference_id, [
+		return new PostgrestFilter($url, [
 			'headers'    => $this->headers,
 			'schema'     => $this->schema,
 			'fetch'      => $this->fetch,

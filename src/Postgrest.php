@@ -46,9 +46,9 @@ class Postgrest
 		}
 		$data = null;
 		$count = null;
+		$error = null;
 
 		try {
-			print_r($this->url->__toString());
 			$response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
 			$status = $response->getStatusCode();
 			$statusText = $response->getReasonPhrase();
@@ -57,7 +57,7 @@ class Postgrest
 				$body = $response->getBody();
 				if ($body === '') {
 					// Prefer: return=minimal
-				} elseif ($this->headers['Accept'] === 'text/csv') {
+				} elseif (isset($this->headers['Accept']) && $this->headers['Accept'] === 'text/csv') {
 					$data = $body->getContents();
 				} elseif (
 					isset($this->headers['Accept']) &&
@@ -73,7 +73,6 @@ class Postgrest
 			$contentRange = $response->getHeader('content-range')[0];
 			if ($countHeader && $contentRange) {
 				$ranges = explode('/', $contentRange);
-				print_r($ranges);
 				if (count($ranges) > 1) {
 					$count = $ranges[1];
 				}
@@ -141,7 +140,7 @@ class PostgrestResponse
 {
 	public mixed $data;
 	public mixed $error;
-	public int$count;
+	public int $count;
 	public int $status;
 	public string $statusText;
 
@@ -149,8 +148,8 @@ class PostgrestResponse
 	{
 		$this->data = $data;
 		$this->error = $error;
-		$this->count = $count;
-		$this->status = $status;
-		$this->statusText = $statusText;
+		$this->count = $count ?? 0;
+		$this->status = $status ?? 0;
+		$this->statusText = $statusText ?? '';
 	}
 }

@@ -13,14 +13,13 @@ final class PostgrestTransformTest extends TestCase
 	public function setup(): void
 	{
 		parent::setUp();
-		$url = Url::fromString('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/');
+		$url = Url::fromString('https://some_reference_id.supabase.co/rest/v1/countries');
 		$this->transform = new PostgrestTransform($url);
 	}
 
 	public function testSelect()
 	{
 		$result = $this->transform->select();
-		// @TODO - this is truly failing - should include the select portion the url result
-		$this->assertEquals('https://gpdefvsxamnscceccczu.supabase.co/rest/v1/?select=%2A', (string) $result->url);
+		$this->assertEquals('https://some_reference_id.supabase.co/rest/v1/countries?select=%2A', (string) $result->url);
 	}
 }

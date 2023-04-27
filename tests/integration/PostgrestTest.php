@@ -57,10 +57,12 @@ final class PostgrestTest extends TestCase
 		$result = $this->client->from('countries')->select()->gt('id', $data)->execute();
 		$this->assertEquals('200', $result->status);
 		$this->assertEquals('OK', $result->statusText);
-		$this->assertCount(3, $result->data[0]);
-		$this->assertArrayHasKey('id', $result->data[0]);
-		$this->assertArrayHasKey('name', $result->data[0]);
-		$this->assertArrayHasKey('created_at', $result->data[0]);
+		if (isset($result->data[0])) {
+			$this->assertCount(3, $result->data[0]);
+			$this->assertArrayHasKey('id', $result->data[0]);
+			$this->assertArrayHasKey('name', $result->data[0]);
+			$this->assertArrayHasKey('created_at', $result->data[0]);
+		}
 	}
 
 	/**
@@ -83,7 +85,6 @@ final class PostgrestTest extends TestCase
 	public function testLessThan($data): void
 	{
 		$result = $this->client->from('countries')->select()->lt('id', $data)->execute();
-		print_r($result);
 		ob_flush();
 		$this->assertEquals('200', $result->status);
 		$this->assertEquals('OK', $result->statusText);

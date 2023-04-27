@@ -9,16 +9,18 @@ use Supabase\Postgrest\Util\EnvSetup;
 final class PostgrestClientTest extends TestCase
 {
 	private $client;
+	private $api_key;
+	private $reference_id;
 
 	public function setup(): void
 	{
 		parent::setUp();
 
 		$keys = EnvSetup::env(__DIR__.'/../');
-		$api_key = $keys['API_KEY'];
-		$reference_id = $keys['REFERENCE_ID'];
+		$this->api_key = $keys['API_KEY'];
+		$this->reference_id = $keys['REFERENCE_ID'];
 
-		$this->client = new PostgrestClient($reference_id, $api_key);
+		$this->client = new PostgrestClient($this->reference_id, $this->api_key);
 	}
 
 	public function testBulkProcessing(): void
@@ -46,35 +48,34 @@ final class PostgrestClientTest extends TestCase
 	{
 		$this->assertInstanceOf(
 			PostgrestClient::class,
-			new PostgrestClient('http://localhost:3000', [])
+			new PostgrestClient('http://localhost:3000', 'some_api_key', [])
 		);
 	}
 
 	public function testCanSelectTable(): void
 	{
 		$result = $this->client->from('users')->select();
-		print_r($result);
 		ob_flush();
-		assertSame($result, 'gpdefvsxamnscceccczu');
+		$this->assertSame((string) $result->url, "https://{$this->reference_id}.supabase.co/rest/v1/users?select=%2A");
 	}
 
 	public function testCanSelectColumns(): void
 	{
-		$this->assertSame($client->from('users')->select('id, name')->url->__toString(), 'http://localhost:3000/users?select=id%2Cname');
+		$this->assertSame($this->client->from('users')->select('id, name')->url->__toString(), "https://{$this->reference_id}.supabase.co/rest/v1/users?select=id%2Cname");
 	}
 
 	public function testCanRPC(): void
 	{
-		$client = new PostgrestClient('http://localhost:3000', []);
+		//$client = new PostgrestClient('http://localhost:3000', 'some_api_key', []);
 
-		$this->assertSame($client->rpc('add_one')->select()->url->__toString(), 'http://localhost:3000/rpc/add_one');
+		$this->assertSame($this->client->rpc('add_one')->select()->url->__toString(), "https://{$this->reference_id}.supabase.co/rest/v1/rpc/add_one?select=%2A");
 	}
 
 	public function testCanExecute(): void
 	{
-		$client = new PostgrestClient('http://localhost:3000', []);
+		//$client = new PostgrestClient('http://localhost:3000', 'some_api_key',[]);
 
-		$this->assertSame($client->from('users')->select()->execute()->status, 200);
+		$this->assertSame($this->client->from('users')->select()->execute()->status, 200);
 	}
 
 	public static function providerArray(): array

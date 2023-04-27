@@ -7,8 +7,9 @@ class PostgrestTransform extends Postgrest
 	public function select($columns = '*')
 	{
 		$quoted = false;
-		$cleanedColumns = join('', array_map(function ($c) {
-			if (preg_match('/\s/', $c)) {
+		$cleanedColumns = str_split($columns ?? '*');
+		$cleanedColumns = array_map(function ($c) use (&$quoted) {
+			if (preg_match('/\s/', $c) && ! $quoted) {
 				return '';
 			}
 			if ($c === '"') {
@@ -16,35 +17,26 @@ class PostgrestTransform extends Postgrest
 			}
 
 			return $c;
-		}, str_split($columns)));
-
-		$this->url->withQueryParameters(['select' => $cleanedColumns]);
-		if (array_key_exists('Prefer', $this->headers)) {
+		}, $cleanedColumns);
+		$cleanedColumns = implode('', $cleanedColumns);
+		$this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
+		if (isset($this->headers['Prefer'])) {
 			$this->headers['Prefer'] .= ',';
 		}
-
-		if (! array_key_exists('Prefer', $this->headers)) {
-			$this->headers['Prefer'] = '';
+		if (! isset($this->headers['Prefer'])) {
+			$this->headers = ['Prefer' => ''];
 		}
-
-		$this->headers['Prefer'] = $this->headers['Prefer'].'return=representation';
+		$this->headers['Prefer'] .= 'return=representation';
 
 		return $this;
 	}
 
 	public function order($column, $opts = ['ascending' => true])
 	{
-		// print_r($this->url->getAllQueryParameters());
 		$key = isset($opts['foreignTable']) ? $opts['foreignTable'].'.order' : 'order';
 
 		$existingOrder = $this->url->getQueryParameter($key);
-		print_r('<');
-		print_r([$existingOrder]);
-		print_r('>');
-
 		$this->url = $this->url->withQueryParameters([$key => $existingOrder ? $existingOrder.',' : ''.$column.'.'.($opts['ascending'] ? 'asc' : 'desc').(isset($opts['nullsFirst']) && $opts['nullsFirst'] ? '.nullsfirst' : '.nullslast')]);
-		//$this->url = $this->url->withQueryParameters([$column => 'neq.'.$value]);
-		// print_r($this->url->getAllQueryParameters());
 
 		return $this;
 	}

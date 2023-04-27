@@ -8,21 +8,13 @@ class PostgrestQuery
 	private $headers;
 	private $schema;
 	private $fetch;
-	private $shouldThrowOnError;
-	private $signal;
-	private $body;
-	private $allowEmpty;
 
 	public function __construct($url, $opts = [])
 	{
 		$this->url = $url;
-		$this->headers = isset($opts['headers']) ? $opts['headers'] : [];
-		$this->schema = isset($opts['schema']) ? $opts['schema'] : '';
-		$this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
-		$this->signal = isset($opts['signal']) && $opts['signal'];
-		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
-		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
-		$this->body = isset($opts['body']) ? $opts['body'] : [];
+		$this->headers = (isset($opts) && isset($opts['headers'])) ? $opts['headers'] : [];
+		$this->schema = isset($opts) && isset($opts['schema']) && $opts['schema'];
+		$this->fetch = isset($opts) && isset($opts['fetch']) && $opts['fetch'];
 	}
 
 	public function select($columns = '*', $opts = [])
