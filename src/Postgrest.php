@@ -1,127 +1,155 @@
-<?php declare(strict_types=1);
+<?php
 
-class Postgrest {
-    private $method;
-    public $url;
-    private $headers;
-    private $body;
-    private $schema;
-    private $shouldThrowOnError;
-    private $signal;
-    private $allowEmpty;
+namespace Supabase\Postgrest;
 
-    public function __construct($opts) {
-        $this->method = isset($opts['method']) && in_array($opts['method'], array('GET', 'POST', 'PATCH', 'PUT', 'DELETE')) && $opts['method'];
-        $this->url = $opts['url'];
-        $this->headers = isset($opts['headers']) && $opts['headers'];
-        $this->schema = isset($opts['schema']) && $opts['schema'];
-        $this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
-        $this->signal = isset($opts['signal']) && $opts['signal'];
-        $this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
-        $this->body = isset($opts['body']) && $opts['body'];
-    }
+use Supabase\Postgrest\Util\PostgrestError;
+use Supabase\Postgrest\Util\Request;
 
-    public function execute() {
-        if($this->schema) {
-            if ($this->method == 'GET' || $this->method == 'HEAD') {
-                $this->headers['Accept-Profile'] = $this->schema;
-            } else {
-                $this->headers['Content-Profile'] = $this->schema;
-            }
-        }
+class Postgrest
+{
+	private $method;
+	public $url;
+	public $headers;
+	private $body;
+	private $schema;
+	private $fetch;
+	private $shouldThrowOnError;
+	private $signal;
+	public $allowEmpty;
 
-        if ($this->method != 'GET' || $this->method != 'HEAD') {
-            $this->headers['Content-Type'] = 'application/json';
-        }
+	public function __construct($url, $opts = [])
+	{
+		$this->method = (isset($opts['method']) && in_array($opts['method'], ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'])) ? $opts['method'] : null;
+		$this->url = $url;
+		$this->headers = isset($opts['headers']) ? $opts['headers'] : [];
+		$this->schema = isset($opts['schema']) ? $opts['schema'] : '';
+		$this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
+		$this->signal = isset($opts['signal']) && $opts['signal'];
+		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
+		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
+		$this->body = isset($opts['body']) ? $opts['body'] : [];
+	}
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url);
+	public function execute()
+	{
+		if ($this->schema) {
+			if ($this->method == 'GET' || $this->method == 'HEAD') {
+				$this->headers = array_merge($this->headers, ['Accept-Profile' => $this->schema]);
+			} else {
+				$this->headers = array_merge($this->headers, ['Content-Profile' => $this->schema]);
+				//$this->headers[] = 'Content-Profile: '.$this->schema;
+			}
+		}
 
-        echo $this->headers;
+		if ($this->method != 'GET' || $this->method != 'HEAD') {
+			$this->headers = array_merge($this->headers, ['content-type' =>'application/json']);
+		}
+		$data = null;
+		$count = null;
+		$error = null;
 
-        if(isset($this->headers) && is_array($this->headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-        }
-        if($this->body) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->body);
-        }
+		try {
+			$response = Request::request($this->method, $this->url->__toString(), $this->headers, json_encode($this->body));
+			$status = $response->getStatusCode();
+			$statusText = $response->getReasonPhrase();
 
-        if(!$response = curl_exec($ch)) {
-            if($this->shouldThrowOnError) {
-                throw new Exception('Curl error: ' . curl_error($ch));
-            } else {
-                $err = curl_error($ch);
-                return new PostgrestResponse(null, array(
-                    'message' => $err,
-                    'details' => '',
-                    'hint' => '',
-                    'code' => curl_getinfo($ch, CURLINFO_HTTP_CODE) || '',
-                ), null, curl_getinfo($ch, CURLINFO_HTTP_CODE));
-            }
-        
-        }
-        curl_close($ch);
+			if ($this->method != 'HEAD') {
+				$body = $response->getBody();
+				if ($body === '') {
+					// Prefer: return=minimal
+				} elseif (isset($this->headers['Accept']) && $this->headers['Accept'] === 'text/csv') {
+					$data = $body->getContents();
+				} elseif (
+					isset($this->headers['Accept']) &&
+					strpos($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false
+				) {
+					$data = $body->getContents();
+				} else {
+					$data = json_decode($body, true);
+				}
+			}
 
-        $error;
-        $data;
-        $count;
-        $status;
-        $statusText;
+			$countHeader = isset($this->headers['Prefer']) ? preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], $matches) : null;
+			$contentRange = $response->getHeader('content-range')[0];
+			if ($countHeader && $contentRange) {
+				$ranges = explode('/', $contentRange);
+				if (count($ranges) > 1) {
+					$count = $ranges[1];
+				}
+			}
 
-        $body = $response->text;
+			$postgrestResponse = new PostgrestResponse($data, $error, $count, $status, $statusText);
 
-        if($response->ok) {
-            if($this->method == 'HEAD') {
-                if($body != '') {
-                    if($this->headers['Accept'] == 'text/csv') {
-                        $data = $body;
-                    } elseif($this->headers['Accept'] && strpost($this->headers['Accept'], 'application/vnd.pgrst.plan+text') !== false) {
-                        $data = $body;
-                    } else {
-                        $data = json_decode($body);
-                    }
-                }
-            }
+			return $postgrestResponse;
 
-            $countHeader = $this->headers['Prefer'] && preg_match('/count=(exact|planned|estimated)/', $this->headers['Prefer'], 'count=exact');
-            $contentRange = $response->headers->get('Content-Range');
-            if($countHeader && $contentRange) {
-                $ranges = explode('/', $contentRange);
-                if(count($ranges) > 1) {
-                    $count = $ranges[1];
-                }
-            }
-        } else {
-            try {
-                $error = json_decode($body);
-            } catch (Exception $e) {
-                $error = array( 'message' => $body );
-            }
+			return $response;
+		} catch (\Exception $e) {
+			if (PostgrestError::isPostgrestError($e)) {
+				if ($e->response) {
+					$body = $e->response->getBody();
+					$error = json_decode($body, true);
 
-            if($error && $this->allowEmpty && strpos($error->details, 'Results contain 0 rows')) {
-                $error = null;
-                $status = 200;
-                $statusText = 'OK';
-            }
+					// Workaround for https://github.com/supabase/postgrest-js/issues/295
+					if (is_array($error) && $e->response->getStatusCode() === 404) {
+						$data = [];
+						$error = null;
+						$status = 200;
+						$statusText = 'OK';
+					}
+				} else {
+					// Workaround for https://github.com/supabase/postgrest-js/issues/295
+					if ($e->response->getStatusCode() === 404 && $body === '') {
+						$status = 204;
+						$statusText = 'No Content';
+					} else {
+						$error = [
+							'message' => $body,
+						];
+					}
+				}
+				//$error = $e->response->getStatusCode();
 
-            if($error && $this->shouldThrowOnError) {
-                throw new Error($error->message);
-            }
-        }
+				if ($error && $this->allowEmpty && strpos($error['details'], 'Results contain 0 rows') !== false) {
+					$error = null;
+					$status = 200;
+					$statusText = 'OK';
+				}
 
-        $postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
+				if ($error && $this->shouldThrowOnError) {
+					throw $e;
+				}
 
-        return $postgrestResponse;
-    
-    }
+				$postgrestResponse = new PostgrestResponse($error, $data, $count, $status, $statusText);
+
+				return $postgrestResponse;
+
+				return new PostgrestResponse(null, [
+					'message' => $e->getMessage(),
+					'details' => isset($e->details) ? $e->details : '',
+					'hint'    => isset($e->hint) ? $e->hint : '',
+					'code'    => is_null($e) ? $e->getCode() : null,
+				], null, is_null($e) ? $e->response->getStatusCode() : null);
+			}
+
+			throw $e;
+		}
+	}
 }
 
-class PostgrestResponse {
-    public function __construct($data = '', $error, $count = 0, $status = 0, $statusText = '') {
-        $this->data = $data;
-        $this->error = $error;
-        $this->count = $count;
-        $this->status = $status;
-        $this->statusText = $statusText;
-    }
+class PostgrestResponse
+{
+	public mixed $data;
+	public mixed $error;
+	public int $count;
+	public int $status;
+	public string $statusText;
+
+	public function __construct($data = '', $error = null, $count = 0, $status = 0, $statusText = '')
+	{
+		$this->data = $data;
+		$this->error = $error;
+		$this->count = $count ?? 0;
+		$this->status = $status ?? 0;
+		$this->statusText = $statusText ?? '';
+	}
 }

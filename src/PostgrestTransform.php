@@ -1,119 +1,131 @@
 <?php
 
-class PostgrestTransform extends Postgrest {
-    public function select($columns = '*') {
-        $quoted = false;
+namespace Supabase\Postgrest;
 
-        $cleanedColumns = join('', array_map(function($c) {
-            if(preg_match('/\s/', $c)) {
-                return '';
-            }
-            if($c === '"') {
-                $quoted = !$quoted;
-            }
+class PostgrestTransform extends Postgrest
+{
+	public function select($columns = '*')
+	{
+		$quoted = false;
+		$cleanedColumns = str_split($columns ?? '*');
+		$cleanedColumns = array_map(function ($c) use (&$quoted) {
+			if (preg_match('/\s/', $c) && ! $quoted) {
+				return '';
+			}
+			if ($c === '"') {
+				$quoted = ! $quoted;
+			}
 
-            return $c;
-        }, str_split($columns)));
+			return $c;
+		}, $cleanedColumns);
+		$cleanedColumns = implode('', $cleanedColumns);
+		$this->url = $this->url->withQueryParameters(['select' => $cleanedColumns]);
+		if (isset($this->headers['Prefer'])) {
+			$this->headers['Prefer'] .= ',';
+		}
+		if (! isset($this->headers['Prefer'])) {
+			$this->headers = ['Prefer' => ''];
+		}
+		$this->headers['Prefer'] .= 'return=representation';
 
-        $this->url->withQueryParameters(['select' => $cleanedColumns]);
+		return $this;
+	}
 
-        if(isset($this->headers) && $this->headers['Prefer']) {
-            $this->headers['Prefer'] += ',';
-        }
+	public function order($column, $opts = ['ascending' => true])
+	{
+		$key = isset($opts['foreignTable']) ? $opts['foreignTable'].'.order' : 'order';
 
-        if(!isset($this->headers)) {
-            $this->headers = ['Prefer' => ''];
-        }
+		$existingOrder = $this->url->getQueryParameter($key);
+		$this->url = $this->url->withQueryParameters([$key => $existingOrder ? $existingOrder.',' : ''.$column.'.'.($opts['ascending'] ? 'asc' : 'desc').(isset($opts['nullsFirst']) && $opts['nullsFirst'] ? '.nullsfirst' : '.nullslast')]);
 
-        $this->headers['Prefer'] = $this->headers['Prefer'] . 'return=representation';
-        return $this;
-    }
+		return $this;
+	}
 
-    public function order($column, $opts = ['ascending' => true]) {
-        $key = $opts->foreignTable ? $opts->foreignTable . '.order' : 'order';
-        $existingOrder = $this->url->searchParams->get($key);
-        $this->url->searchParams->set($key, $existingOrder ? $existingOrder . ',' : '' . $column . ($opts->ascending ? 'asc' : 'desc') . (isset($opts->nullsFirst) && $opts->nullsFirst ? '.nullsfirst' : '.nullslast'));
-        return $this;
-    }
+	public function limit($count, $opts = [])
+	{
+		$key = isset($opts['foreignTable']) ? $opts['foreignTable'].'.limit' : 'limit';
+		$this->url = $this->url->withQueryParameters([$key => strval($count)]);
 
-    public function limit($count, $opts) {
-        $key = $opts->foreignTable ? $opts->foreignTable . '.limit' : 'limit';
-        $this->url->searchParams->set($key, strval($count));
-        return $this;
-    }
+		return $this;
+	}
 
-    public function range($from, $to, $opts) {
-        $keyOffset = $opts->foreignTable ? $opts->foreignTable . '.offset' : 'offset';
-        $keyLimit = $opts->foreignTable ? $opts->foreignTable . '.limit' : 'limit';
-        $this->url->searchParams->set($keyOffset, strval($from));
-        $this->url->searchParams->set($keyLimit, strval($to - $from + 1));
+	public function range($from, $to, $opts = [])
+	{
+		$keyOffset = isset($opts['foreignTable']) ? $opts['foreignTable'].'.offset' : 'offset';
+		$keyLimit = isset($opts['foreignTable']) ? $opts['foreignTable'].'.limit' : 'limit';
+		$this->url = $this->url->withQueryParameters([$keyOffset => strval($from)]);
+		$this->url = $this->url->withQueryParameters([$keyLimit => strval($to - $from + 1)]);
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function abortSignal($signal) {
-        $this->signal = $signal;
-        return $this;
-    }
+	public function abortSignal($signal)
+	{
+		$this->signal = $signal;
 
-    public function single() {
-        $this->headers['Accept'] = 'application/vnd.pgrst.object+json';
-        return $this;
-    }
+		return $this;
+	}
 
-    public function maybeSingle() {
-        $this->headers['Accept'] = 'application/vnd.pgrst.object+json';
-        $this->allowEmpty = true;
-        return $this;
-    }
+	public function single()
+	{
+		$this->headers['Accept'] = 'application/vnd.pgrst.object+json';
 
-    public function csv() {
-        $this->headers['Accept'] = 'text/csv';
-        return $this;
-    }
+		return $this;
+	}
 
-    public function geojson() {
-        $this->headers['Accept'] = 'application/vnd.geo+json';
-        return $this;
-    }
+	public function maybeSingle()
+	{
+		$this->headers['Accept'] = 'application/vnd.pgrst.object+json';
+		$this->allowEmpty = true;
 
-    public function explain($opts) {
-        $options = [
-            $opts->analyze ? 'analyze' : null,
-            $opts->verbose ? 'verbose' : null,
-            $opts->settings ? 'settings' : null,
-            $opts->buffers ? 'buffers' : null,
-            $opts->wal ? 'wal' : null,
-        ];
+		return $this;
+	}
 
-        $cleanedOptions = join('|', array_filter($options, fn($v) => !is_null($v)));
-        $forMediaType = $this->headers['Accepts'];
-        $format = $opts->format || 'text';
-        $this->headers['Accepts'] = 'application/vnd.pgrst.plan+' . $format .'; for="' . $forMediaType . '"; options=' . $options . ';';
+	public function csv()
+	{
+		$this->headers['Accept'] = 'text/csv';
 
-        return $this;
+		return $this;
+	}
 
-    }
+	public function geojson()
+	{
+		$this->headers['Accept'] = 'application/vnd.geo+json';
 
-    public function rollback() {
-        $_a;
+		return $this;
+	}
 
-        if(count(trim($_a = $this->headers['Prefer'] ? $_a : '')) > 0) {
-            $this->headers['Prefer'] += ',tx=rollback';
-        } else {
-            $this->headers['Prefer'] = ',tx=rollback';
-        }
+	public function explain($opts)
+	{
+		$options = [
+			$opts->analyze ? 'analyze' : null,
+			$opts->verbose ? 'verbose' : null,
+			$opts->settings ? 'settings' : null,
+			$opts->buffers ? 'buffers' : null,
+			$opts->wal ? 'wal' : null,
+		];
 
-        return $this;
-    }
+		$cleanedOptions = join('|', array_filter($options, fn ($v) => ! is_null($v)));
+		$forMediaType = $this->headers['Accepts'];
+		$format = $opts->format || 'text';
+		$this->headers['Accepts'] = 'application/vnd.pgrst.plan+'.$format.'; for="'.$forMediaType.'"; options='.$options.';';
 
-    public function returns() {
-        return $this;
-    }
-}
+		return $this;
+	}
 
-function cleanQueryArr($q) {
-    if(preg_match('/\s/', $q)) {
-        $quotes = true;
-    }
+	public function rollback()
+	{
+		if (strlen(trim($this->headers['Prefer'] ?? '')) > 0) {
+			$this->headers['Prefer'] .= ',tx=rollback';
+		} else {
+			$this->headers['Prefer'] = 'tx=rollback';
+		}
+
+		return $this;
+	}
+
+	public function returns()
+	{
+		return $this;
+	}
 }
