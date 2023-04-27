@@ -56,7 +56,7 @@ final class PostgrestClientTest extends TestCase
 	{
 		$result = $this->client->from('users')->select();
 		ob_flush();
-		$this->assertSame((string)$result->url, "https://{$this->reference_id}.supabase.co/rest/v1/users?select=%2A");
+		$this->assertSame((string) $result->url, "https://{$this->reference_id}.supabase.co/rest/v1/users?select=%2A");
 	}
 
 	public function testCanSelectColumns(): void
