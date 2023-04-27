@@ -16,9 +16,9 @@ class PostgrestClient
 	private $fetch;
 	private $domain;
 
-	public function __construct($reference_id, $api_key, $opts = [], $domain = '.supabase.co', $scheme = 'https://', $path = '/rest/v1/')
+	public function __construct($reference_id, $api_key, $opts = [], $domain = 'supabase.co', $scheme = 'https', $path = '/rest/v1/')
 	{
-		$this->url = Url::fromString($scheme.$reference_id.$domain);
+		$this->url = Url::fromString("{$scheme}://{$reference_id}.{$domain}");
 		$headers = ['Authorization' => "Bearer {$api_key}", 'apikey'=>$api_key];
 		$this->headers = array_merge(Constants::getDefaultHeaders(), $headers);
 
