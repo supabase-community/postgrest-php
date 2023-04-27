@@ -27,6 +27,9 @@ jobs:
 
       - name: Run Integration Tests 
         run: ./vendor/bin/phpunit --testsuite test-int
+        env:
+          REFERENCE_ID: ${{ secrets.SB_TEST_REFERENCE_ID }}
+          API_KEY: ${{ secrets.SB_TEST_SERVICE_ROLE }}
 
       - name: Bump version and push tag
         id: tag_version
