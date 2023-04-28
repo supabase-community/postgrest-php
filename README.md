@@ -8,6 +8,7 @@ PHP Client library to interact with Supabase Postgrest.
 ### TODO
 
 - [ ] Support for PHP 7.4 
+- [ ] Remove $this->fetch option - not relevant in this lib 
 - [ ] Running unit and integration tests together results in test failures 
 
 
