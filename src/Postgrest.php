@@ -85,6 +85,12 @@ class Postgrest
 			return $response;
 		} catch (\Exception $e) {
 			if (PostgrestError::isPostgrestError($e)) {
+
+                // init values
+                $status = (int)$e->getCode();
+                $statusText = $e->getMessage();
+
+
 				if ($e->response) {
 					$body = $e->response->getBody();
 					$error = json_decode($body, true);
