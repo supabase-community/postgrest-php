@@ -5,7 +5,6 @@
     "keywords": ["supabase","postgrest", "postgrest-php"],
     "homepage": "https://github.com/supabase-community/postgrest-php",
     "autoload": {
-	 "psr-0": { "": "src/" },
         "psr-4": {
             "Supabase\\Postgrest\\": "src/"
         }
