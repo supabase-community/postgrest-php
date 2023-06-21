@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Supabase\Postgrest\PostgrestClient;
-use Supabase\Postgrest\Util\EnvSetup;
+use Supabase\Common\EnvSetup;
 
 final class PostgrestClientTest extends TestCase
 {
