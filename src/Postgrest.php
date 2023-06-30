@@ -26,7 +26,6 @@ class Postgrest
 		$this->shouldThrowOnError = isset($opts['shouldThrowOnError']) && $opts['shouldThrowOnError'];
 		$this->signal = isset($opts['signal']) && $opts['signal'];
 		$this->allowEmpty = isset($opts['allowEmpty']) && $opts['allowEmpty'];
-		$this->fetch = isset($opts) && isset($opts->fetch) && $opts->fetch;
 		$this->body = isset($opts['body']) ? $opts['body'] : [];
 	}
 
@@ -133,23 +132,5 @@ class Postgrest
 
 			throw $e;
 		}
-	}
-}
-
-class PostgrestResponse
-{
-	public mixed $data;
-	public mixed $error;
-	public int $count;
-	public int $status;
-	public string $statusText;
-
-	public function __construct($data = '', $error = null, $count = 0, $status = 0, $statusText = '')
-	{
-		$this->data = $data;
-		$this->error = $error;
-		$this->count = $count ?? 0;
-		$this->status = $status ?? 0;
-		$this->statusText = $statusText ?? '';
 	}
 }
